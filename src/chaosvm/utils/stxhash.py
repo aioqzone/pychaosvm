@@ -1,6 +1,6 @@
-from typing import Union, Optional
-from collections import defaultdict
 from ast import literal_eval
+from collections import defaultdict
+from typing import Optional, Union
 
 
 def _syntax_hash(node: dict, context: defaultdict, d=";"):
@@ -8,9 +8,7 @@ def _syntax_hash(node: dict, context: defaultdict, d=";"):
         Literal=lambda: defaultdict(lambda: repr(literal_eval(c)), dict(null="null"))[
             (c := node["raw"])
         ],
-        Identifier=lambda: context[c]
-        if len(c := node["name"]) == 1 and str.isupper(c)
-        else c,
+        Identifier=lambda: context[c] if len(c := node["name"]) == 1 else c,
         VariableDeclaration=lambda: f"{node['kind']} {syntax_hash(node['declarations'], context, ',')}",
         VariableDeclarator=lambda: f"{syntax_hash(node['id'], context)}={syntax_hash(node['init'], context)}"
         if node["init"]
@@ -43,3 +41,26 @@ def syntax_hash(node: Union[list, dict], context: defaultdict, d=";"):
         return d.join(syntax_hash(i, context, d) for i in node)
 
     return "".join(_syntax_hash(node, context, d))
+
+
+if __name__ == "__main__":
+    from hashlib import md5
+
+    from pyjsparser import parse
+
+    from chaosvm.parse import path_get
+
+    with open("js/snippet/U.js", encoding="utf8") as f:
+        ls_md5 = []
+        G = dict(k="p", B="P", Q="window", Y="S")
+        ast = parse(f.read())
+
+        for i, func in enumerate(path_get(ast, "body", 0, "expression", "elements")):
+            if func is None:
+                continue
+            c = defaultdict(lambda: f"t{len(c)-4}", G)
+            feat = syntax_hash(path_get(func, "body", "body"), c)
+            ls_md5.append(md5(feat.encode()).hexdigest())
+
+        print(len(ls_md5))
+        print(tuple(ls_md5))

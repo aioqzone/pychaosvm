@@ -1,12 +1,13 @@
-from typing import Type, Union, Callable, Optional, ClassVar, Dict, Any
-from random import random
-from math import floor
-import re
-from datetime import datetime, timezone, timedelta
-from typing_extensions import Self
 import logging
-from json import dumps, JSONEncoder
+import re
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
+from json import JSONEncoder, dumps
+from math import floor
+from random import random
+from typing import Any, Callable, ClassVar, Dict, Optional, Type, Union
+
+from typing_extensions import Self
 
 log = logging.getLogger(__name__)
 
@@ -218,9 +219,7 @@ class Function(Proxy):
 
 
 class Promise(Proxy):
-    def __init__(
-        self, cb: Callable[[Callable[[Any], None], Callable[[str], None]], Any]
-    ) -> None:
+    def __init__(self, cb: Callable[[Callable[[Any], None], Callable[[str], None]], Any]) -> None:
         super().__init__()
         self.result = None
         self.exc = None

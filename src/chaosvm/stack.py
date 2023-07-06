@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from .vm import ChaosVM
-from typing import Sequence, Dict, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Sequence
 
+from .vm import ChaosVM
 
 if TYPE_CHECKING:
     from .proxy.dom import Window

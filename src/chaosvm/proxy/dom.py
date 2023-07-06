@@ -1,20 +1,19 @@
-from typing import Callable, Optional, Dict, Union, Any, List, ClassVar
-from .builtins import *
-from collections import defaultdict
-from typing_extensions import Self
 import re
-from urllib.parse import quote
-from . import element as ele
-from lxml.html import fromstring
-
 from base64 import b64encode
+from collections import defaultdict
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Union
+from urllib.parse import quote
+
+from lxml.html import fromstring
+from typing_extensions import Self
+
+from . import element as ele
+from .builtins import *
 
 
 class EventTarget:
     def __init__(self) -> None:
-        self.__events__ = defaultdict(
-            list
-        )  # type: dict[str, list[tuple[Callable, bool]]]
+        self.__events__ = defaultdict(list)  # type: dict[str, list[tuple[Callable, bool]]]
 
     def addEventListener(
         self,
@@ -169,7 +168,7 @@ class SessionStorage(Proxy):
 
 class TDC(Proxy):
     getInfo: Callable[[], Proxy]
-    getData: Callable[[Optional["Window"], bool], String]
+    getData: Callable[[Optional["Window"], bool], str]
     setData: Callable[[Proxy], None]
     clearTc: Callable[[], None]
 

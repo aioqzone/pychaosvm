@@ -1,15 +1,16 @@
 from __future__ import annotations
-from base64 import b64decode
 
-from typing import Union, Any, Iterable, Callable, Dict, List
-from chaosvm.stack import ChaosStack
-from chaosvm.utils.stxhash import syntax_hash
-from pyjsparser import parse
+from base64 import b64decode
 from collections import defaultdict
 from hashlib import md5
+from typing import Any, Callable, Dict, Iterable, List, Union
+
+from pyjsparser import parse
+
+from chaosvm.proxy.dom import Date, Window
+from chaosvm.stack import ChaosStack
+from chaosvm.utils.stxhash import syntax_hash
 from chaosvm.vm import OP_FEATS
-from chaosvm.proxy.dom import Window, Date
-from datetime import date
 
 
 def path_get(d: Union[dict, list], *path: Union[str, int]) -> Any:
@@ -41,9 +42,7 @@ def parse_vm(vm_js: str, window: Window):
         and path_get(i, "declarations", 0, "id", "name") == "__TENCENT_CHAOS_STACK",
         bodies,
     )
-    stack_bodies = path_get(
-        stack_dcl, "declarations", 0, "init", "callee", "body", "body"
-    )
+    stack_bodies = path_get(stack_dcl, "declarations", 0, "init", "callee", "body", "body")
 
     stack_ret = first(lambda i: i["type"] == "ReturnStatement", stack_bodies)
     ret_expr = path_get(stack_ret, "argument", "expressions")
@@ -74,8 +73,7 @@ def parse_opcode_mapping(vm_declare: dict) -> Dict[int, int]:
     declares = [
         i
         for d in dcl_content
-        if d["type"] == "VariableDeclaration"
-        and (i := path_get(d, "declarations", 0, "init"))
+        if d["type"] == "VariableDeclaration" and (i := path_get(d, "declarations", 0, "init"))
     ]
     op_def_list = first(lambda i: i["type"] == "ArrayExpression", declares)["elements"]
 
@@ -118,5 +116,5 @@ if __name__ == "__main__":
     win = Window()
     with open("js/vm.js.bak", encoding="utf8") as f:
         parse_vm(f.read(), win)(win)
-        # print(win.TDC.getInfo())
+        print(win.TDC.getInfo().__class__)
         print(win.TDC.getData(None, True))

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chaosvm"
-version = "0.1.12"
+version = "0.2.0"
 description = "a pure python executor for tencent chaos vm"
 authors = ["aioqzone <zzzzss990315@gmail.com>"]
 license = "AGPL-3.0"
@@ -11,6 +11,9 @@ python = "^3.8"
 pyjsparser = "^2.7.1"
 typing-extensions = "^4.5.0"
 lxml = "^4.9.2"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
 
 [tool.poetry.group.dev]
 optional = true
@@ -24,3 +27,22 @@ types-lxml = "^2023.3.28"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+# customize begin
+[tool.pytest.ini_options]
+pythonpath = 'src'
+# log_cli = 1
+# log_cli_level = 'WARNING'
+
+[tool.isort]
+profile = "black"
+line_length = 99
+
+[tool.black]
+line-length = 99
+target-version = ['py38']
+
+[tool.pyright]
+pythonVersion = "3.8"
+pythonPlatform = "All"
