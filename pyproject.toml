@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "chaosvm"
+version = "0.1.12"
+description = "a pure python executor for tencent chaos vm"
+authors = ["aioqzone <zzzzss990315@gmail.com>"]
+license = "AGPL-3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pyjsparser = "^2.7.1"
+typing-extensions = "^4.5.0"
+lxml = "^4.9.2"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pre-commit = "*"
+isort = "*"
+types-lxml = "^2023.3.28"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

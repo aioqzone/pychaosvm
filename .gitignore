@@ -1,0 +1,7 @@
+.vscode
+.venv
+*.pyc
+node_modules
+package*.json
+log
+/js
