@@ -1,6 +1,6 @@
 from ast import literal_eval
 from collections import defaultdict
-from typing import Optional, Union
+from typing import Union
 
 
 def _syntax_hash(node: dict, context: defaultdict, d=";"):

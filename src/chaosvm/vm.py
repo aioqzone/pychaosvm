@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from ctypes import c_int32, c_uint32
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, overload
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, overload
 
 from chaosvm.proxy.dom import NULL, Function, JsError, ProxyException, String, Symbol
 

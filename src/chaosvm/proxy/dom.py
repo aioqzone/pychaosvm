@@ -1,27 +1,41 @@
 import re
 from base64 import b64encode
 from collections import defaultdict
-from typing import Any, Callable, ClassVar, Dict, List, Optional, Union
+from typing import Any, Callable, Optional, Union, List, Tuple
 from urllib.parse import quote
 
 from lxml.html import fromstring
 from typing_extensions import Self
+
+from chaosvm.proxy.builtins import Function
 
 from . import element as ele
 from .builtins import *
 
 
 class EventTarget:
+    class MouseEvent(Proxy):
+        pass
+
     def __init__(self) -> None:
+        super().__init__()
         self.__events__ = defaultdict(list)  # type: dict[str, list[tuple[Callable, bool]]]
 
     def addEventListener(
         self,
         event: str,
-        listener: Callable,
+        listener: Function,
         useCapture: bool = False,
     ):
         self.__events__[event].append((listener, useCapture))
+
+    def __getattribute__(self, name: str) -> Any:
+        try:
+            return super().__getattribute__(name)
+        except AttributeError:
+            if name in self.__events__:
+                return self.__events__[name][0]
+            raise
 
 
 class Location(Proxy):
@@ -76,6 +90,12 @@ class Document(Proxy, EventTarget):
         if i.tag == "video":
             return ele.Video(i)
         return ele.HtmlElement(i)
+
+    def addEventListener(self, event: str, listener: Function, useCapture: bool = False):
+        super().addEventListener(event, listener, useCapture)
+        if event == "mousemove" and self._track:
+            for x, y in self._track:
+                listener(None, EventTarget.MouseEvent(type="mouseevent", pageX=x, pageY=y))
 
 
 class ServiceWorkerContainer(Proxy):
@@ -246,3 +266,6 @@ class Window(Proxy, EventTarget):
 
     def matchMedia(self, mediaQueryString: str):
         return Proxy(matches=True)
+
+    def add_mouse_track(self, track: List[Tuple[float, float]]):
+        self.document._track = track

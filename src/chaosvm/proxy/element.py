@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from collections import defaultdict
 from copy import copy, deepcopy
-from typing import ClassVar, Dict, List, Optional, Union
+from typing import Optional, Union
 
 from lxml.html import HtmlElement as element
 from lxml.html import fragment_fromstring, fragments_fromstring, tostring
-from typing_extensions import Self
 
 from .builtins import NULL, Array, Proxy
 

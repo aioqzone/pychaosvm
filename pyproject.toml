@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chaosvm"
-version = "0.2.0"
+version = "0.2.1"
 description = "a pure python executor for tencent chaos vm"
 authors = ["aioqzone <zzzzss990315@gmail.com>"]
 license = "AGPL-3.0"

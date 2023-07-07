@@ -1,11 +1,9 @@
-from __future__ import annotations
-
 from base64 import b64decode
 from collections import defaultdict
 from hashlib import md5
 from typing import Any, Callable, Dict, Iterable, List, Union
 
-from pyjsparser import parse
+import pyjsparser as jsparser
 
 from chaosvm.proxy.dom import Date, Window
 from chaosvm.stack import ChaosStack
@@ -25,7 +23,7 @@ def first(pred: Callable, it: Iterable):
 
 
 def parse_vm(vm_js: str, window: Window):
-    ast = parse(vm_js)
+    ast = jsparser.parse(vm_js)
     assert isinstance(ast, dict)
 
     bodies = [i for i in ast["body"] if i["type"] != "EmptyStatement"]
@@ -114,7 +112,8 @@ if __name__ == "__main__":
     from chaosvm.proxy.dom import Window
 
     win = Window()
+    win.add_mouse_track([(50, 42), (50, 55)])
     with open("js/vm.js.bak", encoding="utf8") as f:
         parse_vm(f.read(), win)(win)
-        print(win.TDC.getInfo().__class__)
+        # print(win.TDC.getInfo().__dict__)
         print(win.TDC.getData(None, True))
