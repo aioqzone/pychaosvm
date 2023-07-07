@@ -4,4 +4,5 @@
 node_modules
 package*.json
 log
+dist
 /js
