@@ -1,0 +1,67 @@
+name: Release and Upload to aioqzone-index
+
+on:
+  pull_request:
+    types:
+      - review_requested
+    branches:
+      - "beta"
+      - "beta/**"
+  pull_request_target:
+    types:
+      - closed
+    branches:
+      - "beta"
+      - "beta/**"
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build-upload:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.labels.*.name, 'release')
+    env:
+      GH_TOKEN: ${{ github.token }}
+      index-repo: aioqzone/aioqzone-index
+    permissions:
+      contents: write # release needs write permission
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          # cache: poetry
+
+      - name: Build dist
+        id: build
+        run: |
+          version=$(poetry version -s)
+          echo "version=$version" >> $GITHUB_ENV
+
+          poetry build
+
+      - name: Upload to Release
+        if: github.event_name != 'pull_request'
+        id: upload
+        uses: JamzumSum/actions/hash-release@master
+        with:
+          tag: ${{ env.version }}
+          notes: ${{ github.event.pull_request.body || '' }}
+          files: dist/*
+
+      - name: Add to aioqzone-index
+        if: github.event_name != 'pull_request'
+        env:
+          urls: ${{ steps.upload.outputs.urls }}
+          GH_TOKEN: ${{ secrets.REPO_TOKEN }} # this is a fine-grained PAT
+        run: |
+          gh workflow -R ${{ env.index-repo }} run add.yml \
+                      -f project=aioqzone-feed \
+                      -f urls="$urls"

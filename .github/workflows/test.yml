@@ -1,0 +1,43 @@
+# install dependency and current package
+name: Test Poetry Project
+
+on:
+  pull_request:
+    types:
+      - review_requested
+    branches:
+      - beta
+      - release
+
+concurrency:
+  group: test-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  install-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.8"]
+    steps:
+      #----------------------------------------------
+      #   check-out repo and set-up node & python
+      #----------------------------------------------
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: poetry
+
+      - name: Install and Test
+        run: |
+          echo "::group::Install Dependencies"
+          poetry install -n -vv
+          echo "::endgroup::"
+
+          echo "::group::pytest outputs"
+          poetry run pytest tests
+          echo "::endgroup::"

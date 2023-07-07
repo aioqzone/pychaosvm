@@ -1,0 +1,37 @@
+name: Auto PR
+
+on:
+  push:
+    branches:
+      - dev
+      - dev/**
+
+concurrency:
+  group: ci-${{ github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  target: beta
+
+jobs:
+  pr:
+    name: Open or Edit PR
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, '@no-pr')"
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: JamzumSum/actions/pr-changelog@master
+        id: git-cliff
+        with:
+          start: ${{ env.target }}
+
+      - name: Push Changelog to PR
+        uses: JamzumSum/actions/push-pr-body@master
+        with:
+          base-branch: ${{ env.target }}
+          body: ${{ steps.git-cliff.outputs.changelog }}
