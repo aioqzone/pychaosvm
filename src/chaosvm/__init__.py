@@ -10,7 +10,7 @@ def prepare(
     ua="",
     href="",
     referer="",
-    mouse_track: Optional[List[Tuple[float, float]]] = None,
+    mouse_track: Optional[List[Tuple[int, int]]] = None,
 ):
     win = Window(top=True)
     if ip:
