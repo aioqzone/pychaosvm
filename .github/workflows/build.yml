@@ -63,5 +63,5 @@ jobs:
           GH_TOKEN: ${{ secrets.REPO_TOKEN }} # this is a fine-grained PAT
         run: |
           gh workflow -R ${{ env.index-repo }} run add.yml \
-                      -f project=aioqzone-feed \
+                      -f project=pychaosvm \
                       -f urls="$urls"
