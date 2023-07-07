@@ -135,10 +135,14 @@ class Date(Proxy):
 
 class Number(Proxy):
     def __init__(self, i) -> None:
-        self._i = int(i)
+        self._i = float(i)
 
     def __repr__(self) -> str:
         return repr(self._i)
+
+    def toFixed(self, digits: int) -> str:
+        fmt = f"%.{digits}f"
+        return fmt % self._i
 
 
 class Math(Proxy):

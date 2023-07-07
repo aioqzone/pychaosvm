@@ -31,7 +31,7 @@ repos:
         types: [python]
       - id: pytest
         name: pytest-check
-        entry: poetry run pytest test
+        entry: poetry run pytest tests
         language: system
         pass_filenames: false
         types: [python]
