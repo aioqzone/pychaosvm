@@ -19,8 +19,8 @@ def test_parse(vmjs: str):
 
 
 def test_execute(vmjs: str):
-    from chaosvm import execute
+    from chaosvm import prepare
 
-    tdc = execute(vmjs)
+    tdc = prepare(vmjs, [(50, 42), (50, 55)])
     assert tdc.getInfo().__dict__
     assert tdc.getData(None, True)
