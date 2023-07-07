@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import re
 from base64 import b64encode
 from collections import defaultdict
-from typing import Any, Callable, Optional, Union, List, Tuple
+from typing import TYPE_CHECKING, Any, Callable, List, Optional, Tuple, Union
 from urllib.parse import quote
 
 from lxml.html import fromstring
@@ -11,6 +13,9 @@ from chaosvm.proxy.builtins import Function
 
 from . import element as ele
 from .builtins import *
+
+if TYPE_CHECKING:
+    from chaosvm.stack import ChaosStack
 
 
 class EventTarget:
@@ -130,6 +135,8 @@ class Console(Proxy):
 
 
 class RTCPeerConnection(Proxy):
+    _ip = "114.5.1.4"
+
     class RPCDataChannel(Proxy):
         def __init__(self, label: str, options: Optional[dict] = None) -> None:
             super().__init__()
@@ -147,18 +154,16 @@ class RTCPeerConnection(Proxy):
     def __setitem__(self, name, value):
         super().__setitem__(name, value)
         if name == "onicecandidate":
-            ip = "114.5.1.4"
             ice = Proxy(
                 candidate=Proxy(
-                    candidate=f"a=candidate:735671172 1 udp 2113937151 {ip} 60444 typ host generation 0 network-cost 999"
+                    candidate=f"a=candidate:735671172 1 udp 2113937151 {self._ip} 60444 typ host generation 0 network-cost 999"
                 )
             )
             value(None, ice)
 
     def createOffer(self, options: Optional[dict] = None):
-        ip = "114.5.1.4"
         offer = Proxy(
-            sdp=f"a=candidate:735671172 1 udp 2113937151 {ip} 60444 typ host generation 0 network-cost 999"
+            sdp=f"a=candidate:735671172 1 udp 2113937151 {self._ip} 60444 typ host generation 0 network-cost 999"
         )
         return Promise(lambda set_result, _: set_result(offer))
 
@@ -220,8 +225,9 @@ class Window(Proxy, EventTarget):
     Error = JsError
     customElements = ele.CustomElementRegistry
     RTCPeerConnection = RTCPeerConnection
-    TDC: TDC
 
+    TDC: TDC
+    __TENCENT_CHAOS_STACK: ChaosStack
     top: Self
 
     def __init__(self, top=True) -> None:
@@ -265,7 +271,7 @@ class Window(Proxy, EventTarget):
         return CSSStyleDeclaration(element)
 
     def matchMedia(self, mediaQueryString: str):
-        return Proxy(matches=True)
+        return Proxy(matches="no-preference" in mediaQueryString)
 
     def add_mouse_track(self, track: List[Tuple[float, float]]):
         self.document._track = track

@@ -3,7 +3,7 @@ from __future__ import annotations
 from ctypes import c_int32, c_uint32
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, overload
 
-from chaosvm.proxy.dom import NULL, Function, JsError, ProxyException, String, Symbol
+from chaosvm.proxy.dom import *
 
 if TYPE_CHECKING:
     from .proxy.dom import Window
@@ -147,6 +147,8 @@ class BuiltinOps:
         else:
             if isinstance(obj, str):
                 obj = String(obj)
+            elif isinstance(obj, (int, float)):
+                obj = Number(obj)
             if isinstance(func := getattr(obj, name), Function):
                 self.stack.append(func(obj, *args))
             else:
@@ -201,6 +203,8 @@ class BuiltinOps:
         return bool(self.err)
 
     def throw(self):
+        if isinstance(i := self.stack[-1], JsError):
+            raise i
         raise JsError(self.stack[-1])
 
     # =====================================================
