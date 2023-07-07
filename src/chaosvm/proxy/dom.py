@@ -273,5 +273,5 @@ class Window(Proxy, EventTarget):
     def matchMedia(self, mediaQueryString: str):
         return Proxy(matches="no-preference" in mediaQueryString)
 
-    def add_mouse_track(self, track: List[Tuple[float, float]]):
+    def add_mouse_track(self, track: List[Tuple[int, int]]):
         self.document._track = track

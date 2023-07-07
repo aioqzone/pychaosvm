@@ -21,6 +21,12 @@ def test_parse(vmjs: str):
 def test_execute(vmjs: str):
     from chaosvm import prepare
 
-    tdc = prepare(vmjs, [(50, 42), (50, 55)])
-    assert tdc.getInfo().__dict__
-    assert tdc.getData(None, True)
+    tdc = prepare(vmjs, "", mouse_track=[(50, 42), (50, 55)])
+
+    info = tdc.getInfo().__dict__
+    assert info
+    assert info["info"]
+
+    collect = tdc.getData(None, True)
+    assert isinstance(collect, str)
+    assert len(collect) > 4

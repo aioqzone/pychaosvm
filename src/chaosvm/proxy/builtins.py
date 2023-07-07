@@ -333,6 +333,12 @@ class String(Proxy):
     def __repr__(self) -> str:
         return repr(self._s)
 
+    def __str__(self):
+        return self._s
+
+    def __len__(self):
+        return len(self._s)
+
     def split(self, sep: Union[str, "RegExp"]):
         if isinstance(sep, str):
             return Array(*self._s.split(sep))
