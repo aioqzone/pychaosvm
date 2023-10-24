@@ -109,8 +109,15 @@ def parse_opcodes(b64: str, arr: List[int]) -> List[int]:
 
 
 if __name__ == "__main__":
+    import logging
+
+    import chaosvm.proxy.builtins as builtin
     from chaosvm.proxy.dom import Window
 
+    logging.basicConfig(
+        filename="log/miss.log", filemode="w", level=logging.DEBUG, format="{message}", style="{"
+    )
+    builtin.log = logging.getLogger(builtin.__name__)
     win = Window()
     win.add_mouse_track([(50, 42), (50, 55)])
     with open("js/vm.js.bak", encoding="utf8") as f:
