@@ -143,10 +143,19 @@ class RTCPeerConnection(Proxy):
             self.label = label
             self.options = options or {}
 
+    class RTCSessionDescription(Proxy):
+        pass
+
+    class RTCPeerConnectionIceEvent(Proxy):
+        pass
+
+    class RTCIceCandidate(Proxy):
+        pass
+
     def __init__(self, servers: dict, *args) -> None:
         super().__init__()
         self.server = servers
-        self.localDescription = Proxy()
+        self.localDescription = self.RTCSessionDescription()
 
     def createDataChannel(self, label: str, options: Optional[dict] = None):
         return self.RPCDataChannel(label, options)
@@ -154,15 +163,15 @@ class RTCPeerConnection(Proxy):
     def __setitem__(self, name, value):
         super().__setitem__(name, value)
         if name == "onicecandidate":
-            ice = Proxy(
-                candidate=Proxy(
+            ice = self.RTCPeerConnectionIceEvent(
+                candidate=self.RTCIceCandidate(
                     candidate=f"a=candidate:735671172 1 udp 2113937151 {self._ip} 60444 typ host generation 0 network-cost 999"
                 )
             )
             value(None, ice)
 
     def createOffer(self, options: Optional[dict] = None):
-        offer = Proxy(
+        offer = self.RTCSessionDescription(
             sdp=f"a=candidate:735671172 1 udp 2113937151 {self._ip} 60444 typ host generation 0 network-cost 999"
         )
         return Promise(lambda set_result, _: set_result(offer))
@@ -198,6 +207,14 @@ class TDC(Proxy):
     clearTc: Callable[[], None]
 
 
+class SyncManager(Proxy):
+    pass
+
+
+class MediaQueryList(Proxy):
+    pass
+
+
 class Window(Proxy, EventTarget):
     TCaptchaReferrer = "https://xui.ptlogin2.qq.com/cgi-bin/xlogin"
     undefined = None
@@ -208,7 +225,7 @@ class Window(Proxy, EventTarget):
     sessionStorage = SessionStorage()
     localStorage = SessionStorage()
     CSS = CSSObjectModel()
-    SyncManager = Proxy()
+    SyncManager = SyncManager()
 
     innerWidth = 300
     innerHeight = 230
@@ -217,7 +234,7 @@ class Window(Proxy, EventTarget):
     Math = Math
     JSON = JSON
     Array = Array
-    Object = Proxy
+    Object = Object
     String = String
     Number = Number
     Symbol = Symbol
@@ -271,7 +288,7 @@ class Window(Proxy, EventTarget):
         return CSSStyleDeclaration(element)
 
     def matchMedia(self, mediaQueryString: str):
-        return Proxy(matches="no-preference" in mediaQueryString)
+        return MediaQueryList(matches="no-preference" in mediaQueryString)
 
     def add_mouse_track(self, track: List[Tuple[int, int]]):
         self.document._track = track

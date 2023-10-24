@@ -15,6 +15,7 @@ log = logging.getLogger(__name__)
 __all__ = [
     "NULL",
     "Proxy",
+    "Object",
     "String",
     "RegExp",
     "Array",
@@ -68,6 +69,7 @@ class Proxy:
         try:
             return super().__getattribute__(name)
         except AttributeError:
+            log.debug("%s.%s not defined", self.__class__.__name__, name)
             return None
 
     def __setattr__(self, name: Union[str, float], __value) -> None:
@@ -91,7 +93,7 @@ class Proxy:
     def __copy__(self):
         return self.__class__(**self.__dict__)
 
-    def __deepcopy(self):
+    def __deepcopy__(self):
         return self.__class__(**deepcopy(self.__dict__))
 
     __getitem__ = __getattribute__
@@ -110,6 +112,10 @@ class Proxy:
     @classmethod
     def getOwnPropertyDescriptor(cls, o: Self, name: str):
         return
+
+
+class Object(Proxy):
+    pass
 
 
 class Date(Proxy):

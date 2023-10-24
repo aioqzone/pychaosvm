@@ -12,12 +12,12 @@ from .builtins import NULL, Array, Proxy
 
 class HtmlElement(Proxy):
     e: element
-    style: Proxy
+    style: CSSStyleDeclaration
 
     def __init__(self, ele: element, **kw) -> None:
         super().__init__(children=[], **kw)
         super().__setattr__("e", ele)
-        super().__setattr__("style", Proxy())
+        super().__setattr__("style", CSSStyleDeclaration())
 
     @property
     def tag(self):
@@ -81,7 +81,7 @@ class HtmlElement(Proxy):
     def getBoundingClientRect(self):
         x, y, w, h = [self.style[k] for k in ["left", "top", "width", "height"]]
         x, y, w, h = [int(k[:2]) if k else 0 for k in [x, y, w, h]]
-        return Proxy(x=x, left=x, y=y, top=y, width=w, height=h, right=x + w, bottom=y + h)
+        return DOMRect(x=x, left=x, y=y, top=y, width=w, height=h, right=x + w, bottom=y + h)
 
     @property
     def offsetLeft(self):
@@ -106,6 +106,14 @@ class HtmlElement(Proxy):
     @property
     def outerHTML(self) -> str:
         return tostring(self.e).decode()
+
+
+class DOMRect(Proxy):
+    pass
+
+
+class CSSStyleDeclaration(Proxy):
+    pass
 
 
 class Video(HtmlElement):
