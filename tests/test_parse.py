@@ -6,7 +6,7 @@ from pytest import fixture
 
 @fixture(scope="module")
 def vmjs() -> str:
-    with get("https://t.captcha.qq.com/tdc.js?app_data=7082613120539107328&t=939066183") as r:
+    with get("https://t.captcha.qq.com/tdc.js?app_data=7124050803564679168&t=636313065") as r:
         return decompress(r.read()).decode()
 
 
