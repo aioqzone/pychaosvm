@@ -5,7 +5,7 @@ from pytest import fixture
 
 
 @fixture(scope="module")
-def vmjs():
+def vmjs() -> str:
     with get("https://t.captcha.qq.com/tdc.js?app_data=7082613120539107328&t=939066183") as r:
         return decompress(r.read()).decode()
 
@@ -23,10 +23,11 @@ def test_execute(vmjs: str):
 
     tdc = prepare(vmjs, "", mouse_track=[(50, 42), (50, 55)])
 
-    info = tdc.getInfo().__dict__
-    assert info
-    assert info["info"]
+    info = tdc.getInfo()
+    assert info.__dict__
+    assert str(info["info"])
 
     collect = tdc.getData(None, True)
     assert isinstance(collect, str)
     assert len(collect) > 4
+    assert "chaosvm" not in collect
