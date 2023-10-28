@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from json import JSONEncoder, dumps
 from math import floor
 from random import random
+from traceback import format_exception
 from typing import Any, Callable, ClassVar, Dict, Optional, Union
 
 from typing_extensions import Self
@@ -26,7 +27,6 @@ __all__ = [
     "Number",
     "Math",
     "JSON",
-    "JsError",
     "ProxyException",
 ]
 
@@ -43,7 +43,7 @@ class NULL:
         try:
             return super().__getattribute__(str(o))
         except AttributeError:
-            raise TypeError(f"Cannot read properties of null (reading '{o}')")
+            raise ProxyException(TypeError(f"Cannot read properties of null (reading '{o}')"))
 
     def __getitem__(self, o):
         return self.__getattribute__(o)
@@ -392,19 +392,19 @@ class String(Proxy):
         return len(self._s)
 
 
-class JsError(RuntimeError):
-    pass
-
-
 class ProxyException(Proxy, RuntimeError):
-    err: BaseException
+    err: str
 
-    def __init__(self, err: BaseException, stack: str) -> None:
-        super().__init__(err=err, stack=stack)
+    def __init__(self, err: Union[str, BaseException]) -> None:
+        if isinstance(err, BaseException):
+            stack = "".join(format_exception(type(err), err, err.__traceback__))
+            super().__init__(err=str(err.args[0]), stack=stack)
+        else:
+            super().__init__(err=err, stack=err)
 
     @property
     def message(self):
-        return self.err.args[0]
+        return self.err
 
     def toString(self):
         return f"Error: {self.message}"

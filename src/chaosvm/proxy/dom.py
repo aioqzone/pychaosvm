@@ -239,7 +239,7 @@ class Window(Proxy, EventTarget):
     Number = Number
     Symbol = Symbol
     RegExp = RegExp
-    Error = JsError
+    Error = ProxyException
     customElements = ele.CustomElementRegistry
     RTCPeerConnection = RTCPeerConnection
 

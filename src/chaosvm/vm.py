@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from ctypes import c_int32, c_uint32
+from os.path import sep
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, overload
 
 from chaosvm.proxy.dom import *
@@ -142,7 +143,11 @@ class BuiltinOps:
             args = []
 
         obj, name = self.stack.pop()[:2]
-        if isinstance(obj, Function):
+        if obj is None:
+            raise ProxyException(
+                TypeError(f"Cannot read properties of undefined (reading '{name}')")
+            )
+        elif isinstance(obj, Function):
             self.stack.append(getattr(obj, name)(obj, *args))
         else:
             if isinstance(obj, str):
@@ -203,9 +208,9 @@ class BuiltinOps:
         return bool(self.err)
 
     def throw(self):
-        if isinstance(i := self.stack[-1], JsError):
+        if isinstance(i := self.stack[-1], ProxyException):
             raise i
-        raise JsError(self.stack[-1])
+        raise ProxyException(self.stack[-1])
 
     # =====================================================
     #                        Logic
@@ -339,6 +344,10 @@ class BuiltinOps:
 
     def getattr(self):
         obj, attr = self.stack.pop()[:2]
+        if obj is None:
+            raise ProxyException(
+                TypeError(f"Cannot read properties of undefined (reading '{attr}')")
+            )
         if isinstance(obj, str) and attr == "length":
             self.stack.append(len(obj))
             return
@@ -437,13 +446,14 @@ class ChaosVM(BuiltinOps):
                     return self.stack[3 + self.v :]
                 else:
                     return self.stack.pop()
-            except (TypeError, AttributeError, JsError) as h:
+            except ProxyException as h:
                 if not self.call_stack:
                     raise
-                from traceback import format_exc
+                if f"{sep}chaosvm{sep}" in str(h.stack):
+                    raise
 
                 self.pc, stack_len, catch = self.call_stack.pop()[:3]
-                self.err = ProxyException(h, format_exc())
+                self.err = h
                 self.stack = self.stack[:stack_len]
                 if catch:
                     if len(i := self.stack[catch]) > 0:
