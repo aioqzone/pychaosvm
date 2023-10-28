@@ -154,7 +154,10 @@ class BuiltinOps:
                 obj = String(obj)
             elif isinstance(obj, (int, float)):
                 obj = Number(obj)
-            if isinstance(func := getattr(obj, name), Function):
+
+            if (func := getattr(obj, name)) is None:
+                raise ProxyException(TypeError("undefined is not a function"))
+            if isinstance(func, Function):
                 self.stack.append(func(obj, *args))
             else:
                 self.stack.append(func(*args))
