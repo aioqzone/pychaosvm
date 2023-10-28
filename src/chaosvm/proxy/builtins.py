@@ -296,10 +296,15 @@ class Array(Proxy):
             return repr([self[i] for i in range(self.length)])
         return "[]"
 
-    def indexOf(self, i):
-        for k, v in self.__dict__.items():
-            if v == i:
-                return int(k)
+    def indexOf(self, i, fromIndex: int = 0):
+        fromIndex = int(fromIndex)
+        if fromIndex < 0:
+            fromIndex += self.length
+            if fromIndex < 0:
+                fromIndex = 0
+        for i in range(fromIndex, self.length):
+            if self[i] == i:
+                return i
         return -1
 
     def push(self, o):
@@ -350,10 +355,13 @@ class String(Proxy):
             return Array(*self._s.split(sep))
         return Array(*sep.pattern.split(self._s))
 
-    def indexOf(self, sub: Union[str, Self]):
+    def indexOf(self, sub: Union[str, Self], position: int = 0):
+        position = int(position)
+        if position < 0:
+            position = 0
         if isinstance(sub, String):
             sub = sub._s
-        return self._s.find(sub)
+        return self._s.find(sub, position)
 
     def match(self, reg: "RegExp"):
         if reg.G:
