@@ -6,10 +6,11 @@ A Python envirionment for Tencent ChaosVM.
 
 ```python
 from chaosvm import prepare
+from urllib.parse import unquote
 
 tdc = prepare(vmjs, mouse_track=[(50, 42), (50, 55)])
-print( tdc.getInfo().__dict__ )     # a python dict
-print( tdc.getData(None, True) )    # a python str
+print( tdc.getInfo().__dict__ )             # a python dict
+print( unquote(tdc.getData(None, True)) )   # a python str
 ```
 
 ## License
