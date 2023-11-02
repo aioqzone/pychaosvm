@@ -4,7 +4,7 @@ import re
 from base64 import b64encode
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Callable, List, Optional, Tuple, Union
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 from lxml.html import fromstring
 from typing_extensions import Self
@@ -292,3 +292,8 @@ class Window(Proxy, EventTarget):
 
     def add_mouse_track(self, track: List[Tuple[int, int]]):
         self.document._track = track
+
+    def decodeURIComponent(self, encodedURI: Union[str, String]):
+        if isinstance(encodedURI, String):
+            encodedURI = encodedURI._s
+        return unquote(encodedURI)

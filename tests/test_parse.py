@@ -1,4 +1,5 @@
 from gzip import decompress
+from urllib.parse import unquote
 from urllib.request import urlopen as get
 
 from pytest import fixture
@@ -28,6 +29,7 @@ def test_execute(vmjs: str):
     assert str(info["info"])
 
     collect = tdc.getData(None, True)
+    collect = unquote(collect)
     assert isinstance(collect, str)
     assert len(collect) > 4
     assert "chaosvm" not in collect
