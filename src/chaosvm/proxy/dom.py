@@ -201,7 +201,7 @@ class SessionStorage(Proxy):
 
 
 class TDC(Proxy):
-    getInfo: Callable[[], Proxy]
+    getInfo: Callable[[Optional["Window"]], Proxy]
     getData: Callable[[Optional["Window"], bool], str]
     setData: Callable[[Proxy], None]
     clearTc: Callable[[], None]
@@ -266,8 +266,8 @@ class Window(Proxy, EventTarget):
     def btoa(self, s: str):
         return b64encode(s.encode()).decode()
 
-    def setTimeout(self, cb: Callable[[], Any], ms: float):
-        cb()
+    def setTimeout(self, cb: Function, ms: float):
+        cb(None)
 
     def setInterval(self, func: Function, delay=0, *args):
         func(None, *args)

@@ -2,6 +2,7 @@ from base64 import b64decode
 from collections import defaultdict
 from hashlib import md5
 from typing import Any, Callable, Dict, Iterable, List, Union
+from urllib.parse import unquote
 
 import pyjsparser as jsparser
 
@@ -122,5 +123,5 @@ if __name__ == "__main__":
     win.add_mouse_track([(50, 42), (50, 55)])
     with open("js/vm.js.bak", encoding="utf8") as f:
         parse_vm(f.read(), win)(win)
-        print(win.TDC.getInfo().__dict__)
-        print(win.TDC.getData(None, True))
+        print(win.TDC.getInfo(None).__dict__)
+        print(unquote(win.TDC.getData(None, True)))
