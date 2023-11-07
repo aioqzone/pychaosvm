@@ -180,12 +180,12 @@ class JSON(Proxy):
 
 
 class Symbol(Proxy):
+    tag: str
     register: ClassVar[Dict[str, Self]] = {}
     iterator: ClassVar[Self]
 
     def __init__(self, tag: Optional[str] = None) -> None:
-        super().__init__()
-        self.tag = tag
+        super().__init__(tag=tag)
 
     def __getattribute__(self, __name):
         if __name == "for":
@@ -215,8 +215,8 @@ class Function(Proxy):
         super().__init__()
         self.__f__ = func
 
-    def __call__(self, *args):
-        return self.__f__(*args)
+    def __call__(self, this: Optional[Proxy], *args):
+        return self.__f__(this, *args)
 
     def call(self, this, *args):
         return self.__f__(*args)
@@ -273,7 +273,7 @@ class Array(Proxy):
     def __len__(self):
         return self.length
 
-    def forEach(self, pred: Callable):
+    def forEach(self, pred: Function):
         for i in range(self.length):
             pred(None, self[i])
 
@@ -374,7 +374,9 @@ class String(Proxy):
         pattern = reg.pattern if isinstance(reg, RegExp) else re.compile(reg)
         if isinstance(newstr, str):
             return pattern.sub(newstr, self._s)
-        return pattern.sub(lambda m: newstr(None, m.group()), self._s)
+        return pattern.sub(
+            lambda m: str(newstr(None, m.group(), *m.groups(), m.start(), self)), self._s
+        )
 
     def slice(self, start: int, stop: Optional[int] = None):
         return self._s[slice(start, stop)]
@@ -433,7 +435,7 @@ class RegExp(Proxy):
 
         self.pattern = re.compile(pattern, flags)
 
-    def exec(self, s: str) -> Union[Array, object]:
+    def exec(self, s: str) -> Union[Array, NULL]:
         if m := self.pattern.search(s):
             return Array(m.group(0), *m.groups())
         return NULL()

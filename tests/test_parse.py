@@ -24,7 +24,7 @@ def test_execute(vmjs: str):
 
     tdc = prepare(vmjs, "", mouse_track=[(50, 42), (50, 55)])
 
-    info = tdc.getInfo()
+    info = tdc.getInfo(None)
     assert info.__dict__
     assert str(info["info"])
 
