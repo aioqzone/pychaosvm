@@ -130,6 +130,10 @@ class Date(Proxy):
         else:
             self.d = datetime.now(self.TZ)
 
+    @classmethod
+    def now(cls):
+        return cls()
+
     def getTime(self):
         return int(self.d.timestamp() * 1000)
 
@@ -137,6 +141,9 @@ class Date(Proxy):
         if offset := self.d.utcoffset():
             return -int(offset.total_seconds() / 60)
         return 0
+
+    def __sub__(self, o: Self) -> int:
+        return (self.d - o.d).seconds * 1000
 
 
 class Number(Proxy):
@@ -271,7 +278,12 @@ class Array(Proxy):
             self[i] = k
 
     def __len__(self):
-        return self.length
+        keys = [int(i) for i in self.__dict__ if i.isdigit()]
+        return max(keys) + 1 if keys else 0
+
+    def __iter__(self):
+        for i in range(self.length):
+            yield self[i]
 
     def forEach(self, pred: Function):
         for i in range(self.length):
@@ -279,8 +291,7 @@ class Array(Proxy):
 
     @property
     def length(self):
-        keys = [int(i) for i in self.__dict__ if i.isdigit()]
-        return max(keys) + 1 if keys else 0
+        return len(self)
 
     @length.setter
     def length(self, v: int):
