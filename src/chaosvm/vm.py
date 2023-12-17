@@ -148,7 +148,7 @@ class BuiltinOps:
                 TypeError(f"Cannot read properties of undefined (reading '{name}')")
             )
         elif isinstance(obj, Function):
-            self.stack.append(getattr(obj, name)(obj, *args))
+            self.stack.append(getattr(obj, name)(*args))
         else:
             if isinstance(obj, str):
                 obj = String(obj)
@@ -157,10 +157,8 @@ class BuiltinOps:
 
             if (func := getattr(obj, name)) is None:
                 raise ProxyException(TypeError("undefined is not a function"))
-            if isinstance(func, Function):
-                self.stack.append(func(obj, *args))
-            else:
-                self.stack.append(func(*args))
+
+            self.stack.append(func(*args))
 
     def wincall(self):
         nargs = self._curcode()
@@ -172,7 +170,7 @@ class BuiltinOps:
             args = []
 
         if isinstance(f := self.stack[-1], Function):
-            self.stack[-1] = f(self.window, *args)
+            self.stack[-1] = f.call(self.window, *args)
         else:
             self.stack[-1] = f(*args)
 
@@ -187,19 +185,19 @@ class BuiltinOps:
         if isinstance(U, int):
             U = (U,)
 
-        def vmcall(this=None, *args):
+        def vmcall(*args):
             new_stack = A.copy()
             new_stack += [None] * (max(3, 1 + max(U or [0])) - len(new_stack))
-            new_stack[0] = [this or self.window]
+            new_stack[0] = [func.this or self.window]
             new_stack[1] = [args]
-            new_stack[2] = [f]
+            new_stack[2] = [func]
             for i, a in zip(U, args):
                 if i > 0:
                     new_stack[i] = [a]
             return ChaosVM(pc, self.opcode, self.window, self.opmap, new_stack)()
 
-        f = Function(vmcall)
-        self.stack.append(f)
+        func = Function(vmcall, self.window)
+        self.stack.append(func)
 
     def clear(self):
         self.err = None

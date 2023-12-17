@@ -5,10 +5,9 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
-      day: saturday
 
   - package-ecosystem: pip
     directory: "/"
+    reviewers: [JamzumSum]
     schedule:
       interval: weekly
-      day: saturday

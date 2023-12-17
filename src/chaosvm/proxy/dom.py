@@ -100,7 +100,7 @@ class Document(Proxy, EventTarget):
         super().addEventListener(event, listener, useCapture)
         if event == "mousemove" and self._track:
             for x, y in self._track:
-                listener(None, EventTarget.MouseEvent(type="mouseevent", pageX=x, pageY=y))
+                listener(EventTarget.MouseEvent(type="mouseevent", pageX=x, pageY=y))
 
 
 class ServiceWorkerContainer(Proxy):
@@ -267,10 +267,10 @@ class Window(Proxy, EventTarget):
         return b64encode(s.encode()).decode()
 
     def setTimeout(self, cb: Function, ms: float):
-        cb(None)
+        cb()
 
     def setInterval(self, func: Function, delay=0, *args):
-        func(None, *args)
+        func(*args)
 
     def clearInterval(self, tid):
         return

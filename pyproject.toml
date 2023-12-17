@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pychaosvm"
-version = "0.3.1"
+version = "0.3.2"
 description = "A Python envirionment for Tencent ChaosVM."
 authors = ["aioqzone <zzzzss990315@gmail.com>"]
 license = "AGPL-3.0-or-later"
@@ -22,7 +22,7 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 black = "*"
 pre-commit = "*"
-isort = "*"
+isort = "!=5.13.0"
 types-lxml = "^2023.3.28"
 
 [build-system]

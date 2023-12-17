@@ -218,17 +218,24 @@ Symbol.iterator = Symbol("Symbol.iterator")
 
 
 class Function(Proxy):
-    def __init__(self, func: Callable) -> None:
+    this: Proxy
+
+    def __init__(self, func: Callable, this: Proxy) -> None:
         super().__init__()
         self.__f__ = func
+        self.this = this
 
-    def __call__(self, this: Optional[Proxy], *args):
-        return self.__f__(this, *args)
-
-    def call(self, this, *args):
+    def __call__(self, *args):
         return self.__f__(*args)
 
-    def apply(self, this, args: tuple):
+    def call(self, this: Optional[Proxy], *args):
+        if this:
+            self.this = this
+        return self.__f__(*args)
+
+    def apply(self, this: Optional[Proxy], args: tuple):
+        if this:
+            self.this = this
         return self.__f__(*args)
 
     def __repr__(self) -> str:
@@ -262,8 +269,6 @@ class Promise(Proxy):
             return self
 
         if resolve:
-            if isinstance(vmcall := resolve, Function):
-                resolve = lambda r: vmcall(None, r)
             p = Promise(lambda set_result, _: set_result(resolve(self.result)))
             if isinstance(p.result, Promise):
                 return p.result
@@ -287,7 +292,7 @@ class Array(Proxy):
 
     def forEach(self, pred: Function):
         for i in range(self.length):
-            pred(None, self[i])
+            pred(self[i])
 
     @property
     def length(self):
@@ -385,9 +390,7 @@ class String(Proxy):
         pattern = reg.pattern if isinstance(reg, RegExp) else re.compile(reg)
         if isinstance(newstr, str):
             return pattern.sub(newstr, self._s)
-        return pattern.sub(
-            lambda m: str(newstr(None, m.group(), *m.groups(), m.start(), self)), self._s
-        )
+        return pattern.sub(lambda m: str(newstr(m.group(), *m.groups(), m.start(), self)), self._s)
 
     def slice(self, start: int, stop: Optional[int] = None):
         return self._s[slice(start, stop)]
