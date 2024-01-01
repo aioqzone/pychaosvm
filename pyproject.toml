@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pychaosvm"
-version = "0.3.2"
+version = "0.3.3"
 description = "A Python envirionment for Tencent ChaosVM."
 authors = ["aioqzone <zzzzss990315@gmail.com>"]
 license = "AGPL-3.0-or-later"
@@ -11,7 +11,7 @@ packages = [{ include = "chaosvm", from = "src" }]
 python = "^3.8"
 pyjsparser = "^2.7.1"
 typing-extensions = ">=4.6.0"
-lxml = "^5.0.0"
+lxml = ">=4.0,<6.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.2"
