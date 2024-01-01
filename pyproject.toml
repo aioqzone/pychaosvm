@@ -11,7 +11,7 @@ packages = [{ include = "chaosvm", from = "src" }]
 python = "^3.8"
 pyjsparser = "^2.7.1"
 typing-extensions = ">=4.6.0"
-lxml = "^5.0.0"
+lxml = ">=4.0,<6.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.2"
