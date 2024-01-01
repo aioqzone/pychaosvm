@@ -14,7 +14,7 @@ typing-extensions = ">=4.6.0"
 lxml = "^4.9.2"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^7.4.2"
+pytest = "^7.4.4"
 
 [tool.poetry.group.dev]
 optional = true
