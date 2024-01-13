@@ -395,6 +395,15 @@ class String(Proxy):
     def slice(self, start: int, stop: Optional[int] = None):
         return self._s[slice(start, stop)]
 
+    def substring(self, start: int, end: Optional[int] = None):
+        start = min(max(0, start), self.length)
+        if end is None:
+            return self._s[max(0, start) :]
+
+        end = min(max(0, end), self.length)
+        start, end = min(start, end), max(start, end)
+        return self._s[start:end]
+
     def toLowerCase(self):
         return self._s.lower()
 

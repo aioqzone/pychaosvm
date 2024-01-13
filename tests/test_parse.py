@@ -33,3 +33,10 @@ def test_execute(vmjs: str):
     assert isinstance(collect, str)
     assert len(collect) > 4
     assert "chaosvm" not in collect
+
+    tdc = prepare(vmjs, "", mouse_track=[(50, 42), (50, 55)])
+    collect = tdc.getData(None, True)
+    collect = unquote(collect)
+    assert isinstance(collect, str)
+    assert len(collect) > 4
+    assert "chaosvm" not in collect
