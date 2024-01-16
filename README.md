@@ -8,15 +8,23 @@ A Python envirionment for Tencent ChaosVM.
 from chaosvm import prepare
 from urllib.parse import unquote
 
-tdc = prepare(vmjs, mouse_track=[(50, 42), (50, 55)])
+tdc = prepare(vmjs)                         # see docstring for more info
 print( tdc.getInfo().__dict__ )             # a python dict
 print( unquote(tdc.getData(None, True)) )   # a python str
+```
+
+## Install
+
+This package is published on GitHub. It is indexed by [aioqzone-index][aioqzone-index].
+
+```sh
+pip install pychaosvm --index-url https://aioqzone.github.io/aioqzone-index/simple
 ```
 
 ## License
 
 ```
-Copyright (C) 2023 aioqzone
+Copyright (C) 2023-2024 aioqzone
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -33,3 +41,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
 
 - [AGPL 3.0 or later](./LICENSE)
+
+
+[aioqzone-index]: https://aioqzone.github.io/aioqzone-index/ "aioqzone package index following PEP 503"
