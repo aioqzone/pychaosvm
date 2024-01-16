@@ -12,6 +12,16 @@ def prepare(
     referer="",
     mouse_track: Optional[List[Tuple[int, int]]] = None,
 ):
+    """Create a window and get its :class:`TDC` object.
+
+    :param js_vm: chaosvm scripts string.
+    :param ip: fake ipv4 address, default as an internal fake ip.
+    :param ua: fake user agent, default as an internal windows UA.
+    :param referer: fake referer, default as an internal referer.
+    :param mouse_track: __Deprecated__ . Used in slide captcha.
+
+    :return: a :class:`TDC` object.
+    """
     win = Window(top=True)
     if ip:
         win.RTCPeerConnection._ip = ip
