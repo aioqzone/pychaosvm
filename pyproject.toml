@@ -23,7 +23,7 @@ optional = true
 black = "*"
 pre-commit = "*"
 isort = "!=5.13.0"
-types-lxml = "^2023.3.28"
+types-lxml = "^2024.2.9"
 
 [build-system]
 requires = ["poetry-core"]
