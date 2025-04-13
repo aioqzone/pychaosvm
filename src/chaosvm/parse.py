@@ -99,7 +99,10 @@ def try_get_declare_contents(vm_declare: dict) -> Tuple[int, List[dict]]:
 
 
 def parse_opcode_mapping(vm_declare: dict) -> Dict[int, int]:
-    """Parse operation-code mapping."""
+    """Parse operation-code mapping.
+
+    :raise RuntimeError: if op feature mismatch
+    """
     params = vm_declare["params"]
     G = {i["name"]: k for i, k in zip(params, ["p", "P", "window", "S"])}
 
@@ -110,8 +113,11 @@ def parse_opcode_mapping(vm_declare: dict) -> Dict[int, int]:
     for i, func in enumerate(op_def_list):
         if func is not None:
             c = defaultdict(lambda: f"t{len(c)-4}", G)
-            feat = syntax_hash(path_get(func, "body", "body"), c)
+            node = path_get(func, "body", "body")
+            feat = syntax_hash(node, c)
             h = md5(feat.encode()).hexdigest()
+            if h not in OP_FEATS:
+                raise RuntimeError("op feature mismatch", node)
             d[i] = OP_FEATS.index(h)
     return d
 

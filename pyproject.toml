@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pychaosvm"
-version = "0.4.2"
+version = "0.4.3"
 description = "A Python envirionment for Tencent ChaosVM."
 authors = ["aioqzone <22952836+JamzumSum@users.noreply.github.com>"]
 license = "AGPL-3.0-or-later"
