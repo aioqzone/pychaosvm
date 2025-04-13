@@ -53,6 +53,8 @@ def prepare(
     :param mouse_track: __Deprecated__ . Used in slide captcha.
     :param return_window: return the window object instead of the :class:`TDC` object.
 
+    :raise RuntimeError: if JS operation mismatched.
+
     :return: The window object if `return_window`, else the :class:`TDC` object of the window.
     """
     win = Window(top=True)
