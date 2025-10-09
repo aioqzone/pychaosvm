@@ -11,27 +11,21 @@ repos:
       - id: check-added-large-files
   - repo: local
     hooks:
-      - id: poetry
-        name: poetry check
-        entry: poetry check
-        pass_filenames: false
-        language: system
-        files: "pyproject.toml"
       - id: isort
-        name: isort (python)
-        entry: poetry run isort .
+        name: sort imports
+        entry: uv run --active ruff check --select I --fix
         pass_filenames: false
         language: system
         types: [python]
       - id: black
-        name: Black
-        entry: poetry run black .
+        name: format code
+        entry: uv run --active ruff format
         pass_filenames: false
         language: system
         types: [python]
       - id: pytest
         name: pytest-check
-        entry: poetry run pytest tests
+        entry: uv run --active pytest tests
         language: system
         pass_filenames: false
         types: [python]
