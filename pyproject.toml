@@ -35,6 +35,9 @@ module-name = "chaosvm"
 [tool.pytest.ini_options]
 pythonpath = 'src'
 
+[tool.ruff]
+line-length = 99
+
 [tool.pyright]
 pythonVersion = "3.9"
 pythonPlatform = "All"
