@@ -1,5 +1,6 @@
 import logging
 import re
+from ast import literal_eval
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from json import JSONEncoder, dumps
@@ -148,7 +149,44 @@ class Date(Proxy):
 
 class Number(Proxy):
     def __init__(self, i) -> None:
-        self._i = float(i)
+        # TODO: rewrite with match expression when python >= 3.10
+
+        # null is 0
+        if i is None:
+            self._i = 0.0
+            return
+
+        if isinstance(i, (Symbol, BigInt)):
+            raise ProxyException(TypeError("Cannot convert a Symbol or BigInt value to a number"))
+
+        if isinstance(i, String):
+            i = i._s
+
+        if isinstance(i, str):
+            # string is stripped
+            i = i.strip()
+            # numeric sperator is not allowed
+            if "_" in i:
+                i = "nan"
+            # BigInt literal is not allowed
+            if i.endswith(("n", "N")) and len(i) > 1:
+                raise ProxyException(SyntaxError("Cannot convert a BigInt value to a number"))
+            # Hex and binary literals are supported
+            if i.startswith(("0b", "0B", "0x", "0X")):
+                try:
+                    i = literal_eval(i)
+                except (ValueError, SyntaxError):
+                    i = "nan"
+            # Infinity is literal
+            if i == "Infinity":
+                i = "inf"
+            if i == "-Infinity":
+                i = "-inf"
+
+        try:
+            self._i = float(i)
+        except ValueError:
+            self._i = float("nan")
 
     def __repr__(self) -> str:
         return repr(self._i)
@@ -156,6 +194,21 @@ class Number(Proxy):
     def toFixed(self, digits: int) -> str:
         fmt = f"%.{digits}f"
         return fmt % self._i
+
+    @classmethod
+    def parseInt(cls, string: Union[str, "String"], radix: int = 10):
+        if isinstance(string, String):
+            string = string._s
+        return cls(int(string, radix))
+
+    @classmethod
+    def parseFloat(cls, string: Union[str, "String"]):
+        if isinstance(string, String):
+            string = string._s
+        return cls(float(string))
+
+
+class BigInt(Proxy): ...  # TODO
 
 
 class Math(Proxy):
