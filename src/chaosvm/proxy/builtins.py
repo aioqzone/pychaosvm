@@ -267,7 +267,7 @@ class JSON(Proxy):
 
     @classmethod
     def stringify(cls, o):
-        return String(dumps(o, cls=cls.JSJsonEncoder))
+        return String(dumps(o, cls=cls.JSJsonEncoder, separators=(",", ":")))
 
 
 class Symbol(Proxy):
