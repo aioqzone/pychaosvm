@@ -30,10 +30,10 @@ def test_new_attr():
     assert isinstance(ast1, dict)
     assert isinstance(ast2, dict)
 
-    c = defaultdict(lambda: f"t{len(c)-4}", G1)
+    c = defaultdict(lambda: f"t{len(c) - 4}", G1)
     f1 = syntax_hash(ast1["body"], c)
 
-    c = defaultdict(lambda: f"t{len(c)-4}", G2)
+    c = defaultdict(lambda: f"t{len(c) - 4}", G2)
     f2 = syntax_hash(ast2["body"], c)
 
     assert f1

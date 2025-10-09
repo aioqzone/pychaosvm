@@ -312,14 +312,14 @@ class Array(Proxy):
             return repr([self[i] for i in range(self.length)])
         return "[]"
 
-    def indexOf(self, i, fromIndex: int = 0):
+    def indexOf(self, searchElement, fromIndex: int = 0) -> int:
         fromIndex = int(fromIndex)
         if fromIndex < 0:
             fromIndex += self.length
             if fromIndex < 0:
                 fromIndex = 0
         for i in range(fromIndex, self.length):
-            if self[i] == i:
+            if self[i] == searchElement:
                 return i
         return -1
 
