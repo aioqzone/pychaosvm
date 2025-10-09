@@ -28,6 +28,8 @@ dev = [
 requires = ["uv_build"]
 build-backend = "uv_build"
 
+[tool.uv.build-backend]
+module-name = "chaosvm"
 
 # customize begin
 [tool.pytest.ini_options]
