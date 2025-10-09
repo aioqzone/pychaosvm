@@ -217,7 +217,7 @@ class MediaQueryList(Proxy):
 
 class Window(Proxy, EventTarget):
     TCaptchaReferrer = "https://xui.ptlogin2.qq.com/cgi-bin/xlogin"
-    undefined = None
+    undefined = Undefined()
     document = Document()
     navigator = Navigator()
     console = Console()

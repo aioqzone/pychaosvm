@@ -7,7 +7,7 @@ from json import JSONEncoder, dumps
 from math import floor
 from random import random
 from traceback import format_exception
-from typing import Any, Callable, ClassVar, Dict, Optional, Union
+from typing import Any, Callable, ClassVar, Dict, Final, Optional, Union
 
 from typing_extensions import Self
 
@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 
 __all__ = [
     "NULL",
+    "Undefined",
     "Proxy",
     "Object",
     "String",
@@ -32,7 +33,13 @@ __all__ = [
 ]
 
 
-class NULL:
+class _fl:
+    nan: Final[float] = float("nan")
+    inf: Final[float] = float("inf")
+    ninf: Final[float] = float("-inf")
+
+
+class _blackhole:
     s: Self
 
     def __new__(cls):
@@ -44,7 +51,9 @@ class NULL:
         try:
             return super().__getattribute__(str(o))
         except AttributeError:
-            raise ProxyException(TypeError(f"Cannot read properties of null (reading '{o}')"))
+            raise ProxyException(
+                TypeError(f"Cannot read properties of {repr(self)} (reading '{o}')")
+            )
 
     def __getitem__(self, o):
         return self.__getattribute__(o)
@@ -52,8 +61,15 @@ class NULL:
     def __bool__(self):
         return False
 
+
+class NULL(_blackhole):
     def __repr__(self) -> str:
         return "null"
+
+
+class Undefined(_blackhole):
+    def __repr__(self) -> str:
+        return "undefined"
 
 
 class Proxy:
@@ -186,7 +202,7 @@ class Number(Proxy):
         try:
             self._i = float(i)
         except ValueError:
-            self._i = float("nan")
+            self._i = _fl.nan
 
     def __repr__(self) -> str:
         return repr(self._i)
@@ -224,13 +240,28 @@ class Math(Proxy):
 class JSON(Proxy):
     class JSJsonEncoder(JSONEncoder):
         def default(self, o: Any) -> Any:
+            if (encoder := getattr(o, "toJSON", None)) and callable(encoder):
+                return encoder()
+            if isinstance(o, Number):
+                if o._i in [_fl.nan, _fl.inf, _fl.ninf]:
+                    return None
             if isinstance(o, String):
                 return o._s
             if isinstance(o, Array):
                 return [o[i] for i in range(o.length)]
             if isinstance(o, Proxy):
-                return o.__dict__
+                # filter undefined, symbol, function values
+                # filter symbol keys
+                return {
+                    k: v
+                    for k, v in o.__dict__
+                    if not isinstance(v, (Undefined, Symbol, Function))
+                    and not isinstance(k, Symbol)
+                }
             if o is NULL.s:
+                return None
+            if o is Undefined.s:
+                # if undefined is not in object, repr as null
                 return None
             return super().default(o)
 
@@ -467,7 +498,7 @@ class String(Proxy):
         return self._s[start:][:length]
 
     def charCodeAt(self, i: int):
-        return ord(self._s[i]) if i < len(self._s) else float("nan")
+        return ord(self._s[i]) if i < len(self._s) else _fl.nan
 
     @classmethod
     def fromCharCode(cls, *num: int):
