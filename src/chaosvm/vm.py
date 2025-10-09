@@ -83,7 +83,7 @@ class BuiltinOps:
         self.stack[-1] = self._curcode()
 
     def undefined(self):
-        self.stack.append(None)
+        self.stack.append(Undefined())
 
     def null(self):
         if self.opmap[self._curcode()] == self.__req_idx:
@@ -140,7 +140,7 @@ class BuiltinOps:
             args = []
 
         obj, name = self.stack.pop()[:2]
-        if obj is None:
+        if obj is None or isinstance(obj, Undefined):
             raise ProxyException(
                 TypeError(f"Cannot read properties of undefined (reading '{name}')")
             )
@@ -152,7 +152,7 @@ class BuiltinOps:
             elif isinstance(obj, (int, float)):
                 obj = Number(obj)
 
-            if (func := getattr(obj, name)) is None:
+            if (func := getattr(obj, name)) is None or isinstance(func, Undefined):
                 raise ProxyException(TypeError("undefined is not a function"))
 
             self.stack.append(func(*args))
