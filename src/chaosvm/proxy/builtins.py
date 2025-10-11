@@ -168,7 +168,7 @@ class Number(Proxy):
         # TODO: rewrite with match expression when python >= 3.10
 
         # null is 0
-        if i is None:
+        if i is None or isinstance(i, NULL):
             self._i = 0.0
             return
 
@@ -222,6 +222,9 @@ class Number(Proxy):
         if isinstance(string, String):
             string = string._s
         return cls(float(string))
+
+    def __float__(self):
+        return self._i
 
 
 class BigInt(Proxy): ...  # TODO
