@@ -263,8 +263,10 @@ class Window(Proxy, EventTarget):
     def location(self):
         return self.document.location
 
-    def btoa(self, s: str):
-        return b64encode(s.encode()).decode()
+    def btoa(self, s: Union[str, String]):
+        if isinstance(s, String):
+            s = s._s
+        return b64encode(s.encode("latin1")).decode()
 
     def setTimeout(self, cb: Function, ms: float):
         cb()
