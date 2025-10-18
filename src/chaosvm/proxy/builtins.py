@@ -1,12 +1,13 @@
 import logging
 import re
+from ast import literal_eval
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from json import JSONEncoder, dumps
 from math import floor
 from random import random
 from traceback import format_exception
-from typing import Any, Callable, ClassVar, Dict, Optional, Union
+from typing import Any, Callable, ClassVar, Dict, Final, Optional, Union
 
 from typing_extensions import Self
 
@@ -15,6 +16,7 @@ log = logging.getLogger(__name__)
 
 __all__ = [
     "NULL",
+    "Undefined",
     "Proxy",
     "Object",
     "String",
@@ -31,7 +33,13 @@ __all__ = [
 ]
 
 
-class NULL:
+class _fl:
+    nan: Final[float] = float("nan")
+    inf: Final[float] = float("inf")
+    ninf: Final[float] = float("-inf")
+
+
+class _blackhole:
     s: Self
 
     def __new__(cls):
@@ -43,7 +51,9 @@ class NULL:
         try:
             return super().__getattribute__(str(o))
         except AttributeError:
-            raise ProxyException(TypeError(f"Cannot read properties of null (reading '{o}')"))
+            raise ProxyException(
+                TypeError(f"Cannot read properties of {repr(self)} (reading '{o}')")
+            )
 
     def __getitem__(self, o):
         return self.__getattribute__(o)
@@ -51,8 +61,15 @@ class NULL:
     def __bool__(self):
         return False
 
+
+class NULL(_blackhole):
     def __repr__(self) -> str:
         return "null"
+
+
+class Undefined(_blackhole):
+    def __repr__(self) -> str:
+        return "undefined"
 
 
 class Proxy:
@@ -148,7 +165,44 @@ class Date(Proxy):
 
 class Number(Proxy):
     def __init__(self, i) -> None:
-        self._i = float(i)
+        # TODO: rewrite with match expression when python >= 3.10
+
+        # null is 0
+        if i is None or isinstance(i, NULL):
+            self._i = 0.0
+            return
+
+        if isinstance(i, (Symbol, BigInt)):
+            raise ProxyException(TypeError("Cannot convert a Symbol or BigInt value to a number"))
+
+        if isinstance(i, String):
+            i = i._s
+
+        if isinstance(i, str):
+            # string is stripped
+            i = i.strip()
+            # numeric sperator is not allowed
+            if "_" in i:
+                i = "nan"
+            # BigInt literal is not allowed
+            if i.endswith(("n", "N")) and len(i) > 1:
+                raise ProxyException(SyntaxError("Cannot convert a BigInt value to a number"))
+            # Hex and binary literals are supported
+            if i.startswith(("0b", "0B", "0x", "0X")):
+                try:
+                    i = literal_eval(i)
+                except (ValueError, SyntaxError):
+                    i = "nan"
+            # Infinity is literal
+            if i == "Infinity":
+                i = "inf"
+            if i == "-Infinity":
+                i = "-inf"
+
+        try:
+            self._i = float(i)
+        except ValueError:
+            self._i = _fl.nan
 
     def __repr__(self) -> str:
         return repr(self._i)
@@ -156,6 +210,24 @@ class Number(Proxy):
     def toFixed(self, digits: int) -> str:
         fmt = f"%.{digits}f"
         return fmt % self._i
+
+    @classmethod
+    def parseInt(cls, string: Union[str, "String"], radix: int = 10):
+        if isinstance(string, String):
+            string = string._s
+        return cls(int(string, radix))
+
+    @classmethod
+    def parseFloat(cls, string: Union[str, "String"]):
+        if isinstance(string, String):
+            string = string._s
+        return cls(float(string))
+
+    def __float__(self):
+        return self._i
+
+
+class BigInt(Proxy): ...  # TODO
 
 
 class Math(Proxy):
@@ -171,19 +243,34 @@ class Math(Proxy):
 class JSON(Proxy):
     class JSJsonEncoder(JSONEncoder):
         def default(self, o: Any) -> Any:
+            if (encoder := getattr(o, "toJSON", None)) and callable(encoder):
+                return encoder()
+            if isinstance(o, Number):
+                if o._i in [_fl.nan, _fl.inf, _fl.ninf]:
+                    return None
             if isinstance(o, String):
                 return o._s
             if isinstance(o, Array):
                 return [o[i] for i in range(o.length)]
             if isinstance(o, Proxy):
-                return o.__dict__
+                # filter undefined, symbol, function values
+                # filter symbol keys
+                return {
+                    k: v
+                    for k, v in o.__dict__
+                    if not isinstance(v, (Undefined, Symbol, Function))
+                    and not isinstance(k, Symbol)
+                }
             if o is NULL.s:
+                return None
+            if o is Undefined.s:
+                # if undefined is not in object, repr as null
                 return None
             return super().default(o)
 
     @classmethod
     def stringify(cls, o):
-        return String(dumps(o, cls=cls.JSJsonEncoder))
+        return String(dumps(o, cls=cls.JSJsonEncoder, separators=(",", ":")))
 
 
 class Symbol(Proxy):
@@ -312,14 +399,14 @@ class Array(Proxy):
             return repr([self[i] for i in range(self.length)])
         return "[]"
 
-    def indexOf(self, i, fromIndex: int = 0):
+    def indexOf(self, searchElement, fromIndex: int = 0) -> int:
         fromIndex = int(fromIndex)
         if fromIndex < 0:
             fromIndex += self.length
             if fromIndex < 0:
                 fromIndex = 0
         for i in range(fromIndex, self.length):
-            if self[i] == i:
+            if self[i] == searchElement:
                 return i
         return -1
 
@@ -414,7 +501,7 @@ class String(Proxy):
         return self._s[start:][:length]
 
     def charCodeAt(self, i: int):
-        return ord(self._s[i]) if i < len(self._s) else float("nan")
+        return ord(self._s[i]) if i < len(self._s) else _fl.nan
 
     @classmethod
     def fromCharCode(cls, *num: int):

@@ -68,7 +68,7 @@ if __name__ == "__main__":
         for i, func in enumerate(path_get(ast, "body", 0, "expression", "elements")):
             if func is None:
                 continue
-            c = defaultdict(lambda: f"t{len(c)-4}", G)
+            c = defaultdict(lambda: f"t{len(c) - 4}", G)
             feat = syntax_hash(path_get(func, "body", "body"), c)
             ls_md5.append(md5(feat.encode()).hexdigest())
 

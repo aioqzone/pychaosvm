@@ -112,7 +112,7 @@ def parse_opcode_mapping(vm_declare: dict) -> Dict[int, int]:
     d: Dict[int, int] = {}
     for i, func in enumerate(op_def_list):
         if func is not None:
-            c = defaultdict(lambda: f"t{len(c)-4}", G)
+            c = defaultdict(lambda: f"t{len(c) - 4}", G)
             node = path_get(func, "body", "body")
             feat = syntax_hash(node, c)
             h = md5(feat.encode()).hexdigest()

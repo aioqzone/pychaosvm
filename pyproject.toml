@@ -1,6 +1,6 @@
 [project]
 name = "pychaosvm"
-version = "0.5.0"
+version = "0.5.4"
 description = "A Python envirionment for Tencent ChaosVM."
 authors = [
     {name = "aioqzone", email = "22952836+JamzumSum@users.noreply.github.com"}
@@ -34,6 +34,15 @@ module-name = "chaosvm"
 # customize begin
 [tool.pytest.ini_options]
 pythonpath = 'src'
+
+[tool.ruff]
+line-length = 99
+
+[tool.ruff.lint]
+ignore = [
+    "F403",  # 'from module import *' used; unable to detect undefined names
+    "F405",  # name may be undefined, or defined from star imports
+]
 
 [tool.pyright]
 pythonVersion = "3.9"
