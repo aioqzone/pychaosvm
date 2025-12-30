@@ -1,28 +1,18 @@
 [project]
 name = "pychaosvm"
-version = "0.5.4"
+version = "0.6.0"
 description = "A Python envirionment for Tencent ChaosVM."
 authors = [
-    {name = "aioqzone", email = "22952836+JamzumSum@users.noreply.github.com"}
+    { name = "aioqzone", email = "22952836+JamzumSum@users.noreply.github.com" },
 ]
-license = {text = "AGPL-3.0-or-later"}
+license = { text = "AGPL-3.0-or-later" }
 readme = "README.md"
-requires-python = ">=3.9"
-dependencies = [
-    "pyjsparser>=2.7.1",
-    "typing-extensions>=4.6.0",
-    "lxml>=6.0.2",
-]
+requires-python = ">=3.10"
+dependencies = ["pyjsparser>=2.7.1", "typing-extensions>=4.6.0", "lxml>=6.0.2"]
 
 [dependency-groups]
-test = [
-    "pytest>=8.2.1",
-]
-dev = [
-    "ruff",
-    "pre-commit",
-    "types-lxml>=2024.2.9",
-]
+test = ["pytest~=9.0"]
+dev = ["ruff", "pre-commit", "types-lxml"]
 
 [build-system]
 requires = ["uv_build"]
@@ -40,10 +30,6 @@ line-length = 99
 
 [tool.ruff.lint]
 ignore = [
-    "F403",  # 'from module import *' used; unable to detect undefined names
-    "F405",  # name may be undefined, or defined from star imports
+    "F403", # 'from module import *' used; unable to detect undefined names
+    "F405", # name may be undefined, or defined from star imports
 ]
-
-[tool.pyright]
-pythonVersion = "3.9"
-pythonPlatform = "All"

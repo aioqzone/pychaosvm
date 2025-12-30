@@ -40,12 +40,28 @@ def parse_vm(vm_js: str, window: Window):
 
     bodies = [i for i in ast["body"] if i["type"] != "EmptyStatement"]
 
-    new_date = path_get(bodies, 0, "expression", "left", "property", "name")
-    window[new_date] = Date
-    date_attr = path_get(bodies, 1, "expression", "left", "property", "name")
-    window[date_attr] = lambda attr, args: getattr(Date, attr)(*args)
-    win_attr = path_get(bodies, 2, "expression", "left", "property", "name")
-    window[win_attr] = path_get(bodies, 2, "expression", "right", "raw")
+    nonliterals = []
+    for i in bodies:
+        if not isinstance(i, dict):
+            continue
+        if i["type"] == "ExpressionStatement":
+            right = path_get(i, "expression", "right")
+            if right["type"] == "Literal":
+                window[path_get(i, "expression", "left", "property", "name")] = right["raw"]
+                continue
+        nonliterals.append(i)
+
+    date_hashes = {
+        syntax_hash(
+            path_get(i, "expression", "right"), c := defaultdict(lambda: f"t{len(c)}")
+        ): path_get(i, "expression", "left", "property", "name")
+        for i in nonliterals
+        if i["type"] == "ExpressionStatement"
+    }
+    window[date_hashes["fun(){return new Date()}"]] = Date
+    window[date_hashes["fun(t0,t1){return Date[t0][apply](Date,t1)}"]] = (
+        lambda attr, args: getattr(Date, attr)(*args)
+    )
 
     stack_dcl = first(
         lambda i: i["type"] == "VariableDeclaration"
