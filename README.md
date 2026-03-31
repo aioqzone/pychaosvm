@@ -33,7 +33,7 @@ pip install pychaosvm --index-url https://aioqzone.github.io/aioqzone-index/simp
 ## License
 
 ```
-Copyright (C) 2023-2025 aioqzone
+Copyright (C) 2023-2026 aioqzone
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
