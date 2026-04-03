@@ -1,6 +1,6 @@
 [project]
 name = "pychaosvm"
-version = "0.7.0.dev3"
+version = "0.7.0"
 description = "A Python envirionment for Tencent ChaosVM."
 authors = [
     { name = "aioqzone", email = "22952836+JamzumSum@users.noreply.github.com" },

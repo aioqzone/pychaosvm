@@ -38,6 +38,11 @@ jobs:
           uv sync --no-default-groups --group test
           echo "::endgroup::"
 
+          echo "::group::Check generated opcode features"
+          uv run python scripts/generate_opfeats.py
+          git diff --exit-code src/chaosvm/opfeats.py
+          echo "::endgroup::"
+
           echo "::group::pytest outputs"
           uv run pytest tests --log-cli-level=WARNING
           echo "::endgroup::"
