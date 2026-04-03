@@ -1,12 +1,21 @@
 .vscode
 .venv
+
 *.pyc
+
+log
+tmp
+
+dist
+build
+
 node_modules
 package*.json
-log
-dist
-tmp
-/js
+
+/js/*
+!js/snippet
+js/snippet/*
+!js/snippet/U.js
 
 AGENTS.md
 agents

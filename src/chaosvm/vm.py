@@ -4,15 +4,11 @@ from ctypes import c_int32, c_uint32
 from os.path import sep
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, overload
 
+from chaosvm.opfeats import OP_NAMES
 from chaosvm.proxy.dom import *
 
 if TYPE_CHECKING:
     from .proxy.dom import Window
-
-# If we update syntax feature extractor, we can just update md5 here.
-# fmt: off
-OP_FEATS = ('2a6add49d812b23c1518c5b129b945f8', '2c64a078cb8c4b856fdc70a609852c84', '22baa62b15474dc170105ea16907be4f', 'a0d2ef60799df6195af8233faf1d4405', '821662fd6eed2bc7baf4ec9cf305ed3d', '86bfa469c728aef498dc0b31acca50d5', 'a171259d3583f1d528c527cca37181c6', 'f4fb163d6ce50af6f20ceee6ba1b2e68', '36daeb76f0369182d47bc0854cd62f3e', '7861d746f3115dc52985788bad85f9f4', 'd5582f0d77825e3dd4b5de1b58c4367c', 'cac49f38e8d51bbe86aa5b8d7784b1d3', '85aeeab3938f54b19b45f3e95802c185', '46be5ad0b74da7c1025e229ee1b86443', 'e6b094bc7d2c7092193723e0765c5848', 'a3dff4b562fdd065d4deace770c3d90e', '19d1047281ae4901d0e08885458ceb5a', 'e6803eb42dc05fc3e04283902865287c', '830b7a2b9fc1439b0358a00b20f229b2', '854175af0e5ea31a14afd3b34a8faa80', '2732918292df330ac7462015dff8969c', 'd378d1594b18890e237b5d472818e309', 'c0d603b7a66da4e8d47907a2c11d4e7a', '35bbb1a74b0380e46a199abe999bf303', '517f0463eba56f88b271acfbdda3c2f7', 'c2b8e8732ecf925e116f1017a4fcfebf', 'acaa0c50323b6fd6e8b9b9395f4ad30b', '9557e2616caac44899f6612e32fa5cd2', 'beb84fc4281460ec6d7610dcf039878d', 'c6539592b26bb629ad989902aef7375a', '2e98536e65b245063c106e192a0fe58e', 'dacd0c2abe15333ad9d5aaf9e550da71', '7211294be669b58b0f3da4940a35dcce', 'fb632ca1b5f01438ecbb31c2560a78d8', 'a14cc4c1bd40951d1052c2c4c8353d13', '1cc5222162165718596063a8d52e9df0', 'ac70343d82c97644522ed31a98649989', 'e41fa5e46c2d94d4d7b54437e71f5862', '9c7676e1872be2fb9bf02aaefa78e066', 'a62dbee713cff9689e8235aac0cb553e', '4509710e44dc7c0bae5b39ee74b188c5', '57270c2716f715468eaf0429965cf123', '61663d46238a47351f4ff7e24326360c', '3b20fb198a1f87da243bf27aadb19805', '9c28d03d5a01e0360e830168b47ec0da', '1540b5872b82ef5c2f093958043b5c7f', '42e24082bd8f6b2d3e1e6c5dfb01f6f3', 'a7c235198def717b198ceb39d993ede9', '80db3dff6284dfb62b88c7629af22afd', 'd2d4c0d054580286a463d79d0881644a', 'e66f61b8e3792cb44c2ae0be71173d45', '0bbd3879b0867fa76722b7ca001cb338', '09a2a080abcdc4d360f6bc5bd05d8639', 'af29f37ff067adb9398e5b9b42b8f7b7', '3e1299db7ebd033250a85059e176ed1c', 'c00fc6652cacebbf04dc3958a058150c', '2598bc9255deafbb48adf287d5d3b12a', '13274e03e106918b096bc5fd4c5423ba')
-# fmt: on
 
 
 def signed(n: int) -> int:
@@ -52,10 +48,10 @@ class BuiltinOps:
         self.call_stack = []
         self.err = None
 
-        # 58 ops in total
         # fmt: off
         self.ops = [self.getattr,self.inst,self.stepout,self.geq,self.copy,self.inv,self.arr_popleft,self.grwinattr,self.zstr,self.clear,self.eq,self.vm_factory,self.assign,self.typeof,self.outcall,self.new,self.inst_arr,self.stop,self.swap,self.check_err,self.throw,self.contains,self.setattr,self.add,self.n2list,self.chobj,self.getobj,self.refeq,self.stepin,self.group,self.wincall,self.drop,self.undefined,self.jump,self.mul,self.je,self.ge,self.rshift,self.mod,self.delattr,self.false,self.get_global,self.bitor,self.sub,self.xor,self.grobj,self.new_attr,self.true,self.getobj2,self.bitand,self.urshift,self.realloc,self.tolist,self.div,self.grgetattr,self.lshift,self.null,self.concat]
         # fmt: on
+        assert tuple(op.__name__ for op in self.ops) == OP_NAMES
         self.__cat_idx = self.ops.index(self.concat)
         self.__req_idx = self.ops.index(self.refeq)
 

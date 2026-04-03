@@ -6,10 +6,10 @@ from urllib.parse import unquote
 
 import pyjsparser as jsparser
 
+from chaosvm.opfeats import OP_FEATS
 from chaosvm.proxy.dom import Date, Window
 from chaosvm.stack import ChaosStack
 from chaosvm.stxhash import syntax_hash
-from chaosvm.vm import OP_FEATS
 
 
 def path_get(d: Union[dict, list], *path: Union[str, int]) -> Any:
