@@ -23,30 +23,41 @@ def _syntax_hash(node: dict, context: defaultdict, d=";"):
         Identifier=lambda: context[c] if len(c := node["name"]) == 1 else c,
         VariableDeclaration=lambda: f"{syntax_hash(node['declarations'], context)}",
         VariableDeclarator=_variable_declarator,
-        AssignmentExpression=lambda: f"{syntax_hash(node['left'], context)}"
-        f"{node['operator']}{syntax_hash(node['right'], context)}",
+        AssignmentExpression=lambda: (
+            f"{syntax_hash(node['left'], context)}"
+            f"{node['operator']}{syntax_hash(node['right'], context)}"
+        ),
         UnaryExpression=lambda: f"{node['operator']}{syntax_hash(node['argument'], context)}",
-        BinaryExpression=lambda: f"{syntax_hash(node['left'], context)}"
-        f"{node['operator']}{syntax_hash(node['right'], context)}",
+        BinaryExpression=lambda: (
+            f"{syntax_hash(node['left'], context)}"
+            f"{node['operator']}{syntax_hash(node['right'], context)}"
+        ),
         UpdateExpression=lambda: "^" if node["prefix"] else "" + node["operator"],
         ArrayExpression=lambda: f"[{syntax_hash(node['elements'], context)}]",
-        CallExpression=lambda: f"{syntax_hash(node['callee'], context)}"
-        f"({syntax_hash(node['arguments'], context, ',')})",
+        CallExpression=lambda: (
+            f"{syntax_hash(node['callee'], context)}"
+            f"({syntax_hash(node['arguments'], context, ',')})"
+        ),
         NewExpression=lambda: f"new {syntax_hash(node['callee'], context)}()",
-        MemberExpression=lambda: f"{syntax_hash(node['object'], context)}"
-        f"[{syntax_hash(node['property'], context)}]",
+        MemberExpression=lambda: (
+            f"{syntax_hash(node['object'], context)}[{syntax_hash(node['property'], context)}]"
+        ),
         ExpressionStatement=lambda: syntax_hash(node["expression"], context),
         SequenceExpression=lambda: syntax_hash(node["expressions"], context),
         ForStatement=lambda: "for",
         ForInStatement=lambda: "for in",
-        ConditionalExpression=lambda: f"{syntax_hash(node['test'], context)}?"
-        f"({syntax_hash(node['consequent'], context)}):"
-        f"({syntax_hash(node['alternate'], context)})",
+        ConditionalExpression=lambda: (
+            f"{syntax_hash(node['test'], context)}?"
+            f"({syntax_hash(node['consequent'], context)}):"
+            f"({syntax_hash(node['alternate'], context)})"
+        ),
         ReturnStatement=lambda: f"return {syntax_hash(node['argument'], context)}",
         ThrowStatement=lambda: f"throw {syntax_hash(node['argument'], context)}",
-        FunctionExpression=lambda: f"fun{'' if node['id'] is None else ' ' + syntax_hash(node['id'], context)}"
-        f"({','.join(syntax_hash(p, context) for p in node['params'])})"
-        f"{syntax_hash(node['body'], context)}",
+        FunctionExpression=lambda: (
+            f"fun{'' if node['id'] is None else ' ' + syntax_hash(node['id'], context)}"
+            f"({','.join(syntax_hash(p, context) for p in node['params'])})"
+            f"{syntax_hash(node['body'], context)}"
+        ),
         BlockStatement=lambda: f"{{{syntax_hash(node['body'], context)}}}",
     )
     yield defaultdict(lambda: str, cases)[node["type"]]()

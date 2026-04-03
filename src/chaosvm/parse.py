@@ -59,13 +59,15 @@ def parse_vm(vm_js: str, window: Window):
         if i["type"] == "ExpressionStatement"
     }
     window[date_hashes["fun(){return new Date()}"]] = Date
-    window[date_hashes["fun(t0,t1){return Date[t0][apply](Date,t1)}"]] = (
-        lambda attr, args: getattr(Date, attr)(*args)
+    window[date_hashes["fun(t0,t1){return Date[t0][apply](Date,t1)}"]] = lambda attr, args: (
+        getattr(Date, attr)(*args)
     )
 
     stack_dcl = first(
-        lambda i: i["type"] == "VariableDeclaration"
-        and path_get(i, "declarations", 0, "id", "name") == "__TENCENT_CHAOS_STACK",
+        lambda i: (
+            i["type"] == "VariableDeclaration"
+            and path_get(i, "declarations", 0, "id", "name") == "__TENCENT_CHAOS_STACK"
+        ),
         bodies,
     )
     stack_bodies = path_get(stack_dcl, "declarations", 0, "init", "callee", "body", "body")
@@ -81,8 +83,10 @@ def parse_vm(vm_js: str, window: Window):
     opcodes = parse_opcodes(data["raw"], [int(i["value"]) for i in opdata["elements"]])
 
     vm_dcl = first(
-        lambda i: i["type"] == "FunctionDeclaration"
-        and path_get(i, "id", "name") == "__TENCENT_CHAOS_VM",
+        lambda i: (
+            i["type"] == "FunctionDeclaration"
+            and path_get(i, "id", "name") == "__TENCENT_CHAOS_VM"
+        ),
         stack_bodies,
     )
 

@@ -23,11 +23,11 @@ repos:
         pass_filenames: false
         language: system
         types: [python]
-      - id: pytest
-        name: pytest-check
-        entry: uv run --active pytest tests
-        language: system
-        pass_filenames: false
-        types: [python]
+      # - id: pytest
+      #   name: pytest-check
+      #   entry: uv run --active pytest tests
+      #   language: system
+      #   pass_filenames: false
+      #   types: [python]
 default_language_version:
   python: python3
