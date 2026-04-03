@@ -26,7 +26,7 @@ def syntax_hash(node: list | dict, context: defaultdict[str, str], delimiter=";"
             c = node["name"]
             return context[c] if len(c) == 1 else c
         case "VariableDeclaration":
-            return f"{syntax_hash(node['declarations'], context)}"
+            return syntax_hash(node["declarations"], context)
         case "VariableDeclarator":
             id_hash = syntax_hash(node["id"], context)
             if node["init"]:
@@ -53,7 +53,7 @@ def syntax_hash(node: list | dict, context: defaultdict[str, str], delimiter=";"
         case "UpdateExpression":
             return ("^" if node["prefix"] else "") + node["operator"]
         case "ArrayExpression":
-            return f"[{syntax_hash(node['elements'], context)}]"
+            return f"[{syntax_hash(node['elements'], context, ',')}]"
         case "CallExpression":
             return (
                 f"{syntax_hash(node['callee'], context)}"
