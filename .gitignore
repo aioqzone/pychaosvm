@@ -7,3 +7,6 @@ log
 dist
 tmp
 /js
+
+AGENTS.md
+agents

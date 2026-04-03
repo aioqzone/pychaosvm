@@ -1,73 +1,96 @@
 from ast import literal_eval
 from collections import defaultdict
-from typing import Union
 
 
-def _syntax_hash(node: dict, context: defaultdict, d=";"):
-    def _variable_declarator() -> str:
-        id_hash = syntax_hash(node["id"], context)
-        if node["init"]:
-            if node["init"]["type"] == "SequenceExpression":
-                return (
-                    syntax_hash(node["init"]["expressions"][:-1], context)
-                    + d
-                    + f"{id_hash}={syntax_hash(node['init']['expressions'][-1], context)}"
-                )
-            return f"{id_hash}={syntax_hash(node['init'], context)}"
-        return ""
+def syntax_hash(node: list | dict, context: defaultdict[str, str], delimiter=";") -> str:
+    """Generate a normalized syntax hash string from a pyjsparser AST node.
 
-    cases = dict(
-        Literal=lambda: defaultdict(lambda: repr(literal_eval(c)), dict(null="null"))[
-            (c := node["raw"])
-        ],
-        Identifier=lambda: context[c] if len(c := node["name"]) == 1 else c,
-        VariableDeclaration=lambda: f"{syntax_hash(node['declarations'], context)}",
-        VariableDeclarator=_variable_declarator,
-        AssignmentExpression=lambda: (
-            f"{syntax_hash(node['left'], context)}"
-            f"{node['operator']}{syntax_hash(node['right'], context)}"
-        ),
-        UnaryExpression=lambda: f"{node['operator']}{syntax_hash(node['argument'], context)}",
-        BinaryExpression=lambda: (
-            f"{syntax_hash(node['left'], context)}"
-            f"{node['operator']}{syntax_hash(node['right'], context)}"
-        ),
-        UpdateExpression=lambda: "^" if node["prefix"] else "" + node["operator"],
-        ArrayExpression=lambda: f"[{syntax_hash(node['elements'], context)}]",
-        CallExpression=lambda: (
-            f"{syntax_hash(node['callee'], context)}"
-            f"({syntax_hash(node['arguments'], context, ',')})"
-        ),
-        NewExpression=lambda: f"new {syntax_hash(node['callee'], context)}()",
-        MemberExpression=lambda: (
-            f"{syntax_hash(node['object'], context)}[{syntax_hash(node['property'], context)}]"
-        ),
-        ExpressionStatement=lambda: syntax_hash(node["expression"], context),
-        SequenceExpression=lambda: syntax_hash(node["expressions"], context),
-        ForStatement=lambda: "for",
-        ForInStatement=lambda: "for in",
-        ConditionalExpression=lambda: (
-            f"{syntax_hash(node['test'], context)}?"
-            f"({syntax_hash(node['consequent'], context)}):"
-            f"({syntax_hash(node['alternate'], context)})"
-        ),
-        ReturnStatement=lambda: f"return {syntax_hash(node['argument'], context)}",
-        ThrowStatement=lambda: f"throw {syntax_hash(node['argument'], context)}",
-        FunctionExpression=lambda: (
-            f"fun{'' if node['id'] is None else ' ' + syntax_hash(node['id'], context)}"
-            f"({','.join(syntax_hash(p, context) for p in node['params'])})"
-            f"{syntax_hash(node['body'], context)}"
-        ),
-        BlockStatement=lambda: f"{{{syntax_hash(node['body'], context)}}}",
-    )
-    yield defaultdict(lambda: str, cases)[node["type"]]()
+    The hash string is used to identify ChaosVM operations by their syntax
+    structure. Variable names are normalized via *context*.
 
-
-def syntax_hash(node: Union[list, dict], context: defaultdict, d=";"):
+    :param node: A pyjsparser AST node (dict) or a list of nodes.
+    :param context: A mapping used to normalize variable names.
+    :param delimiter: Delimiter used when joining list elements. Defaults to ``";"``.
+    :return: The normalized syntax hash string.
+    """
     if isinstance(node, list):
-        return d.join(syntax_hash(i, context, d) for i in node)
+        return delimiter.join(syntax_hash(i, context, delimiter) for i in node)
 
-    return "".join(_syntax_hash(node, context, d))
+    match node["type"]:
+        case "Literal":
+            raw = node["raw"]
+            if raw == "null":
+                return "null"
+            return repr(literal_eval(raw))
+        case "Identifier":
+            c = node["name"]
+            return context[c] if len(c) == 1 else c
+        case "VariableDeclaration":
+            return f"{syntax_hash(node['declarations'], context)}"
+        case "VariableDeclarator":
+            id_hash = syntax_hash(node["id"], context)
+            if node["init"]:
+                if node["init"]["type"] == "SequenceExpression":
+                    return (
+                        syntax_hash(node["init"]["expressions"][:-1], context)
+                        + delimiter
+                        + f"{id_hash}={syntax_hash(node['init']['expressions'][-1], context)}"
+                    )
+                return f"{id_hash}={syntax_hash(node['init'], context)}"
+            return ""
+        case "AssignmentExpression":
+            return (
+                f"{syntax_hash(node['left'], context)}"
+                f"{node['operator']}{syntax_hash(node['right'], context)}"
+            )
+        case "UnaryExpression":
+            return f"{node['operator']}{syntax_hash(node['argument'], context)}"
+        case "BinaryExpression":
+            return (
+                f"{syntax_hash(node['left'], context)}"
+                f"{node['operator']}{syntax_hash(node['right'], context)}"
+            )
+        case "UpdateExpression":
+            return ("^" if node["prefix"] else "") + node["operator"]
+        case "ArrayExpression":
+            return f"[{syntax_hash(node['elements'], context)}]"
+        case "CallExpression":
+            return (
+                f"{syntax_hash(node['callee'], context)}"
+                f"({syntax_hash(node['arguments'], context, ',')})"
+            )
+        case "NewExpression":
+            return f"new {syntax_hash(node['callee'], context)}()"
+        case "MemberExpression":
+            return (
+                f"{syntax_hash(node['object'], context)}[{syntax_hash(node['property'], context)}]"
+            )
+        case "ExpressionStatement":
+            return syntax_hash(node["expression"], context)
+        case "SequenceExpression":
+            return syntax_hash(node["expressions"], context)
+        case "ForStatement":
+            return "for"
+        case "ForInStatement":
+            return "for in"
+        case "ConditionalExpression":
+            return (
+                f"{syntax_hash(node['test'], context)}?"
+                f"({syntax_hash(node['consequent'], context)}):"
+                f"({syntax_hash(node['alternate'], context)})"
+            )
+        case "ReturnStatement":
+            return f"return {syntax_hash(node['argument'], context)}"
+        case "ThrowStatement":
+            return f"throw {syntax_hash(node['argument'], context)}"
+        case "FunctionExpression":
+            id_part = "" if node["id"] is None else " " + syntax_hash(node["id"], context)
+            params = ",".join(syntax_hash(p, context) for p in node["params"])
+            return f"fun{id_part}({params}){syntax_hash(node['body'], context)}"
+        case "BlockStatement":
+            return f"{{{syntax_hash(node['body'], context)}}}"
+        case _:
+            return ""
 
 
 if __name__ == "__main__":
