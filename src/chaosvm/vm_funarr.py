@@ -56,73 +56,11 @@ class FunarrOps(UnifiedOps):
         self.call_stack = []
         self.err = None
 
-        # Build operation dispatch list
-        self.ops = [
-            self.getattr,
-            self.immediate,
-            self.stepout,
-            self.geq,
-            self.copy,
-            self.inv,
-            self.arr_popleft,
-            self.grwinattr,
-            self.zstr,
-            self.clear,
-            self.eq,
-            self.vm_factory,
-            self.assign,
-            self.typeof,
-            self.outcall,
-            self.new,
-            self.inst_arr,
-            self.stop,
-            self.swap,
-            self.check_err,
-            self.throw,
-            self.contains,
-            self.setattr,
-            self.add,
-            self.n2list,
-            self.chobj,
-            self.getobj,
-            self.refeq,
-            self.stepin,
-            self.group,
-            self.wincall,
-            self.drop,
-            self.undefined,
-            self.jump,
-            self.mul,
-            self.je,
-            self.ge,
-            self.rshift,
-            self.mod,
-            self.delattr,
-            self.false,
-            self.get_global,
-            self.bitor,
-            self.sub,
-            self.xor,
-            self.grobj,
-            self.new_attr,
-            self.true,
-            self.getobj2,
-            self.bitand,
-            self.urshift,
-            self.realloc,
-            self.tolist,
-            self.div,
-            self.grgetattr,
-            self.lshift,
-            self.null,
-            self.concat,
-        ]
-
         # Verify opmap matches expected features
         self._verify_ops()
 
-        self.__cat_idx = self.ops.index(self.concat)
-        self.__req_idx = self.ops.index(self.refeq)
+        self.__cat_idx = self.ops.index(self.__class__.concat)
+        self.__req_idx = self.ops.index(self.__class__.refeq)
 
     def _verify_ops(self) -> None:
         """Verify that ops list matches expected operation names."""
@@ -525,7 +463,7 @@ class FunarrOps(UnifiedOps):
                 E = False
                 while not E:
                     i = self._curcode()
-                    E = self.ops[self.opmap[i]]()
+                    E = self.ops[self.opmap[i]](self)
                     pass
                 if self.err:
                     raise self.err
@@ -551,3 +489,65 @@ class FunarrOps(UnifiedOps):
                         i[0] = self.err
                     else:
                         i.append(self.err)
+
+    # Build operation dispatch list
+    ops = (
+        getattr,
+        immediate,
+        stepout,
+        geq,
+        copy,
+        inv,
+        arr_popleft,
+        grwinattr,
+        zstr,
+        clear,
+        eq,
+        vm_factory,
+        assign,
+        typeof,
+        outcall,
+        new,
+        inst_arr,
+        stop,
+        swap,
+        check_err,
+        throw,
+        contains,
+        setattr,
+        add,
+        n2list,
+        chobj,
+        getobj,
+        refeq,
+        stepin,
+        group,
+        wincall,
+        drop,
+        undefined,
+        jump,
+        mul,
+        je,
+        ge,
+        rshift,
+        mod,
+        delattr,
+        false,
+        get_global,
+        bitor,
+        sub,
+        xor,
+        grobj,
+        new_attr,
+        true,
+        getobj2,
+        bitand,
+        urshift,
+        realloc,
+        tolist,
+        div,
+        grgetattr,
+        lshift,
+        null,
+        concat,
+    )

@@ -18,20 +18,16 @@ def detect_vm_type_from_opcodes(opcodes: Tuple[int, ...]) -> str:
 
     Switch VM characteristics:
     - Maximum opcode value typically > 57 (funarr max)
-    - Uses opcodes 5, 73, 83, 92 (ADD_IMM, STR_CHAR, PRE_INC, PRE_DEC)
 
     Returns 'switch' or 'funarr'.
     """
-    assert opcodes
+    if not opcodes:
+        raise ValueError("opcodes is empty")
+
     max_op = max(opcodes)
 
     # If max opcode exceeds funarr range, likely switch
     if max_op > 68:
-        return "switch"
-
-    # Check for switch-specific opcodes
-    switch_indicators = {5, 73, 83, 92}
-    if any(op in opcodes for op in switch_indicators):
         return "switch"
 
     return "funarr"

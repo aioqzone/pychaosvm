@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Generate opfeats.py from ChaosVM JS snippets and the BuiltinOps implementation.
 
-Supports both funarr-style (U.js) and switch-style (switch.js) VM instruction sets.
+Supports both funarr-style (U.js) and switch-style (V.js) VM instruction sets.
 """
 
 from __future__ import annotations
 
 import argparse
-import ast
 import sys
 from collections import defaultdict
 from hashlib import md5
@@ -24,32 +23,9 @@ VM_PY_PATH = PROJECT_ROOT / "src" / "chaosvm" / "vm_funarr.py"
 
 def extract_op_names(vm_py_path: Path = VM_PY_PATH) -> list[str]:
     """Parse vm.py and extract the ordered list of opcode method names from self.ops."""
-    source = vm_py_path.read_text(encoding="utf-8")
-    tree = ast.parse(source)
+    from chaosvm.vm_funarr import FunarrOps
 
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.ClassDef):
-            continue
-        for item in node.body:
-            if isinstance(item, ast.FunctionDef) and item.name == "__init__":
-                for stmt in item.body:
-                    if (
-                        isinstance(stmt, ast.Assign)
-                        and len(stmt.targets) == 1
-                        and isinstance(stmt.targets[0], ast.Attribute)
-                        and stmt.targets[0].attr == "ops"
-                        and isinstance(stmt.value, ast.List)
-                    ):
-                        names = []
-                        for elt in stmt.value.elts:
-                            if isinstance(elt, ast.Attribute) and elt.attr != "ops":
-                                names.append(elt.attr)
-                            else:
-                                raise ValueError(
-                                    f"Unexpected element in self.ops: {ast.dump(elt)}"
-                                )
-                        return names
-    raise RuntimeError("Could not find self.ops list in BuiltinOps.__init__")
+    return [f.__name__ for f in FunarrOps.ops]
 
 
 def extract_op_syntax(u_js_path: Path) -> list[str]:
@@ -95,21 +71,7 @@ def extract_switch_op_info(switch_js_path: Path) -> tuple[list[str], list[str]]:
             # Extract case body (statements before break)
             case_body = case["consequent"]
             # Generate syntax hash from case body
-            G = dict(
-                R="R",
-                K="K",
-                o="o",
-                Q="Q",
-                C="C",
-                U="U",
-                w="w",
-                T="T",
-                S="S",
-                Y="Y",
-                I="I",
-                G="G",
-                F="F",
-            )
+            G = {c: c for c in "RKoQCUwTSYIGF"}
             c = defaultdict(lambda: f"t{len(c)}", G)
             feat = syntax_hash(case_body, c)
             op_syntax.append(feat)
@@ -212,7 +174,7 @@ def main(argv: list[str] | None = None) -> int:
         "--switch-js",
         type=Path,
         default=Path("js/snippet/V.js"),
-        help="Path to the switch-style JS snippet (default: js/snippet/switch.js)",
+        help="Path to the switch-style JS snippet (default: js/snippet/V.js)",
     )
     parser.add_argument(
         "--output",
