@@ -16,11 +16,18 @@ class ChaosStack:
     pc_start = 0
     """where the pc is set when vm is started."""
 
-    def __init__(self, opmap: Dict[int, int], opcode: Sequence[int], pc=0) -> None:
+    def __init__(
+        self,
+        opmap: Dict[int, int],
+        opcode: Sequence[int],
+        pc=0,
+        vm_type: str = "auto",
+    ) -> None:
         self.opmap = opmap.copy()
         self.opcode = tuple(opcode)
         """stack data in bytes"""
         self.pc_start = pc
+        self.vm_type = vm_type
 
     def __call__(self, window: Window):
-        return ChaosVM(self.pc_start, self.opcode, window, self.opmap)()
+        return ChaosVM(self.pc_start, self.opcode, window, self.opmap, vm_type=self.vm_type)()
