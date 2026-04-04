@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from pyjsparser import parse
 
-from chaosvm.stxhash import syntax_hash
+from chaosvm.stxhash import syntax_feat
 
 
 def test_new_attr():
@@ -31,10 +31,10 @@ def test_new_attr():
     assert isinstance(ast2, dict)
 
     c = defaultdict(lambda: f"t{len(c) - 4}", G1)
-    f1 = syntax_hash(ast1["body"], c)
+    f1 = syntax_feat(ast1["body"], c)
 
     c = defaultdict(lambda: f"t{len(c) - 4}", G2)
-    f2 = syntax_hash(ast2["body"], c)
+    f2 = syntax_feat(ast2["body"], c)
 
     assert f1
     assert f1 == f2

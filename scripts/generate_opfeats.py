@@ -15,7 +15,7 @@ from pathlib import Path
 from pyjsparser import parse
 
 from chaosvm.parse import path_get
-from chaosvm.stxhash import syntax_hash
+from chaosvm.stxhash import syntax_feat
 
 PROJECT_ROOT = Path(__file__).parent.parent
 VM_PY_PATH = PROJECT_ROOT / "src" / "chaosvm" / "vm_funarr.py"
@@ -40,7 +40,7 @@ def extract_op_syntax(u_js_path: Path) -> list[str]:
             continue
         c = defaultdict(lambda: f"t{len(c) - 4}", G)
         node = path_get(func, "body", "body")
-        feat = syntax_hash(node, c)
+        feat = syntax_feat(node, c)
         feats.append(feat)
     return feats
 
@@ -73,7 +73,7 @@ def extract_switch_op_info(switch_js_path: Path) -> tuple[list[str], list[str]]:
             # Generate syntax hash from case body
             G = {c: c for c in "RKoQCUwTSYIGF"}
             c = defaultdict(lambda: f"t{len(c)}", G)
-            feat = syntax_hash(case_body, c)
+            feat = syntax_feat(case_body, c)
             op_syntax.append(feat)
             op_names.append(f"op_{int(case_num)}")
 
