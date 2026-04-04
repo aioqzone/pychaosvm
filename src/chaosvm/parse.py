@@ -45,10 +45,13 @@ def parse_vm(vm_js: str, window: Window):
         if not isinstance(i, dict):
             continue
         if i["type"] == "ExpressionStatement":
-            right = path_get(i, "expression", "right")
-            if right["type"] == "Literal":
-                window[path_get(i, "expression", "left", "property", "name")] = right["raw"]
-                continue
+            # Check if expression has right and left keys (AssignmentExpression)
+            expr = i["expression"]
+            if "right" in expr and "left" in expr:
+                right = path_get(i, "expression", "right")
+                if right["type"] == "Literal":
+                    window[path_get(i, "expression", "left", "property", "name")] = right["raw"]
+                    continue
         nonliterals.append(i)
 
     date_hashes = {
@@ -56,7 +59,7 @@ def parse_vm(vm_js: str, window: Window):
             path_get(i, "expression", "right"), c := defaultdict(lambda: f"t{len(c)}")
         ): path_get(i, "expression", "left", "property", "name")
         for i in nonliterals
-        if i["type"] == "ExpressionStatement"
+        if i["type"] == "ExpressionStatement" and "right" in i["expression"] and "left" in i["expression"]
     }
     window[date_hashes["fun(){return new Date()}"]] = Date
     window[date_hashes["fun(t0,t1){return Date[t0][apply](Date,t1)}"]] = (
