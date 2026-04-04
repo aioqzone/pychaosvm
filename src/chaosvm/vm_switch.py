@@ -428,6 +428,15 @@ class SwitchOps(UnifiedOps):
         attr = self._get_reg(attr_reg)
         self._set_reg(dst, self._getattr(obj, attr))
 
+    def op_11_setprop_ret(self) -> None:
+        """11: SETPROP_RET R[a][b] = R[c]; return R[d]"""
+        obj_reg = self._curcode()
+        attr = self._curcode()
+        val_reg = self._curcode()
+        ret_reg = self._curcode()
+        self._setattr(self._get_reg(obj_reg), attr, self._get_reg(val_reg))
+        # Return handled by execution loop
+
     def op_18_getprop2(self) -> None:
         """18: GETPROP2 Two consecutive property gets"""
         dst1 = self._curcode()
