@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, List, Tuple
 
 from chaosvm.opfeats import SWITCH_OP_FEATS, SWITCH_OP_NAMES
 
+from .proxy.dom import ProxyException
 from .vm_unified import UnifiedOps
 
 if TYPE_CHECKING:
@@ -75,8 +76,6 @@ class SwitchOps(UnifiedOps):
 
     def _verify_opmap(self) -> None:
         """Verify that opmap matches expected instruction features."""
-        from hashlib import md5
-
         for opcode_idx, func_idx in self.opmap.items():
             # This would need the actual syntax hash calculation
             # For now, just validate indices are in range
@@ -1038,10 +1037,8 @@ class SwitchOps(UnifiedOps):
 
     def execute(self) -> Any:
         """Execute the VM until completion."""
-        from .proxy.dom import ProxyException
-
         # Build opcode dispatch table
-        ops = [getattr(self, f"op_{i}", None) for i in range(96)]
+        ops = [getattr(self, fname) for fname in SWITCH_OP_NAMES]
 
         while True:
             try:

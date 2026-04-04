@@ -196,300 +196,300 @@ FUNARR_OP_FEATS: tuple[str, ...] = (
 SWITCH_OP_COUNT: int = 96
 
 SWITCH_OP_NAMES: tuple[str, ...] = (
-    "op_0",
-    "op_1",
-    "op_2",
-    "op_3",
-    "op_4",
-    "op_5",
-    "op_6",
-    "op_7",
-    "op_8",
-    "op_9",
-    "op_10",
-    "op_11",
-    "op_12",
-    "op_13",
-    "op_14",
-    "op_15",
-    "op_16",
-    "op_17",
-    "op_18",
-    "op_19",
-    "op_20",
-    "op_21",
-    "op_22",
-    "op_23",
-    "op_24",
-    "op_25",
-    "op_26",
-    "op_27",
-    "op_28",
-    "op_29",
-    "op_30",
-    "op_31",
-    "op_32",
-    "op_33",
-    "op_34",
-    "op_35",
-    "op_36",
-    "op_37",
-    "op_38",
-    "op_39",
-    "op_40",
-    "op_41",
-    "op_42",
-    "op_43",
-    "op_44",
-    "op_45",
-    "op_46",
-    "op_47",
-    "op_48",
-    "op_49",
-    "op_50",
-    "op_51",
-    "op_52",
-    "op_53",
-    "op_54",
-    "op_55",
-    "op_56",
-    "op_57",
-    "op_58",
-    "op_59",
-    "op_60",
-    "op_61",
-    "op_62",
-    "op_63",
-    "op_64",
-    "op_65",
-    "op_66",
-    "op_67",
-    "op_68",
-    "op_69",
-    "op_70",
-    "op_71",
-    "op_72",
-    "op_73",
-    "op_74",
-    "op_75",
-    "op_76",
-    "op_77",
-    "op_78",
-    "op_79",
-    "op_80",
-    "op_81",
-    "op_82",
-    "op_83",
-    "op_84",
-    "op_85",
-    "op_86",
-    "op_87",
-    "op_88",
-    "op_89",
-    "op_90",
-    "op_91",
-    "op_92",
-    "op_93",
-    "op_94",
-    "op_95",
+    "op_0_add_reg",
+    "op_1_jcond",
+    "op_2_to_num",
+    "op_3_push_ret",
+    "op_4_to_num_unary",
+    "op_5_add_imm",
+    "op_6_eq_imm",
+    "op_7_getprop_imm",
+    "op_8_ushr_imm",
+    "op_9_new_1",
+    "op_10_throw",
+    "op_11_setprop_ret",
+    "op_12_call_0",
+    "op_13_getprop_call",
+    "op_14_gt_reg",
+    "op_15_eq_reg",
+    "op_16_setprop2",
+    "op_17_ret",
+    "op_18_getprop2",
+    "op_19_catch_setup",
+    "op_20_call_3",
+    "op_21_str_char2",
+    "op_22_typeof",
+    "op_23_lt_reg",
+    "op_24_sar_imm",
+    "op_25_push_catch",
+    "op_26_mov",
+    "op_27_neg",
+    "op_28_str_init_char",
+    "op_29_pop_catch",
+    "op_30_or_imm",
+    "op_31_mul_reg",
+    "op_32_shl_reg",
+    "op_33_or_reg",
+    "op_34_getprop_idx",
+    "op_35_in",
+    "op_36_not",
+    "op_37_str_init",
+    "op_38_setprop2_ctx",
+    "op_39_call_1",
+    "op_40_array_iter",
+    "op_41_call_1_save",
+    "op_42_str_char_set",
+    "op_43_str_char_set_clr",
+    "op_44_str_char_obj",
+    "op_45_ge_imm",
+    "op_46_load_exc",
+    "op_47_str_char_prop",
+    "op_48_load_imm",
+    "op_49_inc_copy",
+    "op_50_setprop_ret_ctx",
+    "op_51_load_ctx",
+    "op_52_str_char_prop2",
+    "op_53_seq_imm",
+    "op_54_div_reg",
+    "op_55_mod_reg",
+    "op_56_keys",
+    "op_57_func_create",
+    "op_58_dup2",
+    "op_59_and_imm",
+    "op_60_sub_imm_rev",
+    "op_61_sub_reg",
+    "op_62_new_0",
+    "op_63_call_3_ctx",
+    "op_64_str_char3",
+    "op_65_call_1_ctx",
+    "op_66_load_null",
+    "op_67_seq_reg",
+    "op_68_apply",
+    "op_69_setprop_imm",
+    "op_70_str_func_prop",
+    "op_71_shl_imm",
+    "op_72_sar_reg",
+    "op_73_str_char",
+    "op_74_delprop",
+    "op_75_func_create2",
+    "op_76_jmp",
+    "op_77_func_method",
+    "op_78_call_2",
+    "op_79_sub_imm",
+    "op_80_load_call",
+    "op_81_gt_imm",
+    "op_82_call_2_dyn",
+    "op_83_pre_inc",
+    "op_84_setprop_dyn",
+    "op_85_array_new",
+    "op_86_obj_new",
+    "op_87_xor_reg",
+    "op_88_lt_imm",
+    "op_89_new_2",
+    "op_90_setprop_get",
+    "op_91_getprop_dyn",
+    "op_92_pre_dec",
+    "op_93_ret_ctx",
+    "op_94_call_2_ctx",
+    "op_95_le_imm",
 )
 
 SWITCH_OP_SYNTAX: tuple[str, ...] = (
-    "R[o[^++]]=R[o[^++]]+R[o[^++]];",  # 0: op_0
-    "K+=R[o[^++]]?(o[^++]):(o[^++;^++]);",  # 1: op_1
-    "R[o[^++]]='bigint'==typeofR[o[K+1]]?(R[o[^++]]):(R[o[^++]]-0);",  # 2: op_2
-    "C[push](K+o[^++]);",  # 3: op_3
-    "R[o[^++]]=+R[o[^++]];",  # 4: op_4
-    "R[o[^++]]=R[o[^++]]+o[^++];",  # 5: op_5
-    "R[o[^++]]=R[o[^++]]==o[^++];",  # 6: op_6
-    "R[o[^++]]=R[o[^++]][o[^++]];",  # 7: op_7
-    "R[o[^++]]=R[o[^++]]>>>o[^++];",  # 8: op_8
-    "R[o[^++]]=new R[o[^++]]();",  # 9: op_9
-    "throw R[o[^++]];",  # 10: op_10
-    "R[o[^++]][o[^++]]=R[o[^++]];return R[o[^++]];",  # 11: op_11
-    "R[o[^++]]=R[o[^++]][call](Q);",  # 12: op_12
-    "R[o[^++]]=R[o[^++]][R[o[^++]]];R[o[^++]]=R[o[^++]][call](R[o[^++]],R[o[^++]]);",  # 13: op_13
-    "R[o[^++]]=R[o[^++]]>R[o[^++]];",  # 14: op_14
-    "R[o[^++]]=R[o[^++]]==R[o[^++]];",  # 15: op_15
-    "R[o[^++]]=R[o[^++]];R[o[^++]][R[o[^++]]]=R[o[^++]];",  # 16: op_16
-    "return R[o[^++]];",  # 17: op_17
-    "R[o[^++]]=R[o[^++]][o[^++]];R[o[^++]]=R[o[^++]][o[^++]];",  # 18: op_18
-    "R[o[^++]]=U;R[o[^++]]=R[o[^++]];C[push](K+o[^++]);",  # 19: op_19
-    "R[o[^++]]=R[o[^++]][call](R[o[^++]],R[o[^++]],R[o[^++]],R[o[^++]]);",  # 20: op_20
-    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]+=String[fromCharCode](o[^++]);",  # 21: op_21
-    "R[o[^++]]=typeofR[o[^++]];",  # 22: op_22
-    "R[o[^++]]=R[o[^++]]<R[o[^++]];",  # 23: op_23
-    "R[o[^++]]=R[o[^++]]>>o[^++];",  # 24: op_24
-    "R[o[^++]]=R[o[^++]];C[push](K+o[^++]);",  # 25: op_25
-    "R[o[^++]]=R[o[^++]];",  # 26: op_26
-    "R[o[^++]]=-R[o[^++]];",  # 27: op_27
-    "R[o[^++]]='';R[o[^++]]+=String[fromCharCode](o[^++]);",  # 28: op_28
-    "C[pop]();",  # 29: op_29
-    "R[o[^++]]=R[o[^++]]|o[^++];",  # 30: op_30
-    "R[o[^++]]=R[o[^++]]*R[o[^++]];",  # 31: op_31
-    "R[o[^++]]=R[o[^++]]<<R[o[^++]];",  # 32: op_32
-    "R[o[^++]]=R[o[^++]]|R[o[^++]];",  # 33: op_33
-    "R[o[^++]]=R[o[^++]][R[o[^++]]];R[o[^++]]=o[^++];",  # 34: op_34
-    "R[o[^++]]=R[o[^++]]inR[o[^++]];",  # 35: op_35
-    "R[o[^++]]=!R[o[^++]];",  # 36: op_36
-    "R[o[^++]]='';",  # 37: op_37
-    "R[o[^++]][R[o[^++]]]=R[o[^++]];R[o[^++]][R[o[^++]]]=R[o[^++]];R[o[^++]]=Q;",  # 38: op_38
-    "R[o[^++]]=R[o[^++]][call](R[o[^++]]);",  # 39: op_39
-    "w=R[o[^++]];;",  # 40: op_40
-    "R[o[^++]]=R[o[^++]][call](Q,R[o[^++]]);R[o[^++]]=R[o[^++]];",  # 41: op_41
-    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]][o[^++]]=R[o[^++]];",  # 42: op_42
-    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]][o[^++]]=R[o[^++]];R[o[^++]]='';",  # 43: op_43
-    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]=;R[o[^++]]='';",  # 44: op_44
-    "R[o[^++]]=R[o[^++]]>=o[^++];",  # 45: op_45
-    "R[o[^++]]=U;",  # 46: op_46
-    "R[o[^++]]=R[o[^++]][R[o[^++]]];R[o[^++]]='';R[o[^++]]+=String[fromCharCode](o[^++]);",  # 47: op_47
-    "R[o[^++]]=o[^++];",  # 48: op_48
-    "R[o[^++]]='bigint'==typeofR[o[K+1]]?(R[o[^++]]):(R[o[^++]]-0);R[o[^++]]=^++;R[o[^++]]=R[o[^++]];",  # 49: op_49
-    "R[o[^++]][R[o[^++]]]=R[o[^++]];R[o[^++]]=Q;return R[o[^++]];",  # 50: op_50
-    "R[o[^++]]=Q;",  # 51: op_51
-    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]=R[o[^++]][R[o[^++]]];",  # 52: op_52
-    "R[o[^++]]=R[o[^++]]===o[^++];",  # 53: op_53
-    "R[o[^++]]=R[o[^++]]/R[o[^++]];",  # 54: op_54
-    "R[o[^++]]=R[o[^++]]%R[o[^++]];",  # 55: op_55
-    "w=[];for in;R[o[^++]]=w;",  # 56: op_56
-    "w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;",  # 57: op_57
-    "R[o[^++]]=R[o[^++]];R[o[^++]]=R[o[^++]];",  # 58: op_58
-    "R[o[^++]]=R[o[^++]]&o[^++];",  # 59: op_59
-    "R[o[^++]]=o[^++]-R[o[^++]];",  # 60: op_60
-    "R[o[^++]]=R[o[^++]]-R[o[^++]];",  # 61: op_61
-    "R[o[^++]]=new R[o[^++]]();",  # 62: op_62
-    "R[o[^++]]=R[o[^++]][call](Q,R[o[^++]],R[o[^++]],R[o[^++]]);",  # 63: op_63
-    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]+=String[fromCharCode](o[^++]);",  # 64: op_64
-    "R[o[^++]]=R[o[^++]][call](Q,R[o[^++]]);",  # 65: op_65
-    "R[o[^++]]=null;",  # 66: op_66
-    "R[o[^++]]=R[o[^++]]===R[o[^++]];",  # 67: op_67
-    "w=[];for;R[o[^++]]=R[o[^++]][apply](R[o[^++]],w);",  # 68: op_68
-    "R[o[^++]][o[^++]]=R[o[^++]];",  # 69: op_69
-    "R[o[^++]]+=String[fromCharCode](o[^++]);w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;R[o[^++]][R[o[^++]]]=R[o[^++]];",  # 70: op_70
-    "R[o[^++]]=R[o[^++]]<<o[^++];",  # 71: op_71
-    "R[o[^++]]=R[o[^++]]>>R[o[^++]];",  # 72: op_72
-    "R[o[^++]]+=String[fromCharCode](o[^++]);",  # 73: op_73
-    "R[o[^++]]=deleteR[o[^++]][R[o[^++]]];",  # 74: op_74
-    "w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;R[o[^++]][o[^++]]=R[o[^++]];w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;",  # 75: op_75
-    "K+=o[^++];",  # 76: op_76
-    "R[o[^++]][o[^++]]=R[o[^++]];w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;R[o[^++]][o[^++]]=R[o[^++]];",  # 77: op_77
-    "R[o[^++]]=R[o[^++]][call](R[o[^++]],R[o[^++]],R[o[^++]]);",  # 78: op_78
-    "R[o[^++]]=R[o[^++]]-o[^++];",  # 79: op_79
-    "R[o[^++]]=o[^++];R[o[^++]]=R[o[^++]][call](Q,R[o[^++]]);R[o[^++]]=R[o[^++]];",  # 80: op_80
-    "R[o[^++]]=R[o[^++]]>o[^++];",  # 81: op_81
-    "R[o[^++]]=R[o[^++]][call](R[o[^++]],R[o[^++]]);",  # 82: op_82
-    "R[o[^++]]=^++;",  # 83: op_83
-    "R[o[^++]][R[o[^++]]]=R[o[^++]];",  # 84: op_84
-    "R[o[^++]]=Array(o[^++]);",  # 85: op_85
-    "R[o[^++]]=;",  # 86: op_86
-    "R[o[^++]]=R[o[^++]]^R[o[^++]];",  # 87: op_87
-    "R[o[^++]]=R[o[^++]]<o[^++];",  # 88: op_88
-    "R[o[^++]]=new R[o[^++]]();",  # 89: op_89
-    "R[o[^++]][R[o[^++]]]=R[o[^++]];R[o[^++]]=R[o[^++]][R[o[^++]]];R[o[^++]]=o[^++];",  # 90: op_90
-    "R[o[^++]]=R[o[^++]][R[o[^++]]];",  # 91: op_91
-    "R[o[^++]]=^--;",  # 92: op_92
-    "R[o[^++]]=Q;return R[o[^++]];",  # 93: op_93
-    "R[o[^++]]=R[o[^++]][call](Q,R[o[^++]],R[o[^++]]);",  # 94: op_94
-    "R[o[^++]]=R[o[^++]]<=o[^++];",  # 95: op_95
+    "R[o[^++]]=R[o[^++]]+R[o[^++]];",  # 0: op_0_add_reg
+    "K+=R[o[^++]]?(o[^++]):(o[^++;^++]);",  # 1: op_1_jcond
+    "R[o[^++]]='bigint'==typeofR[o[K+1]]?(R[o[^++]]):(R[o[^++]]-0);",  # 2: op_2_to_num
+    "C[push](K+o[^++]);",  # 3: op_3_push_ret
+    "R[o[^++]]=+R[o[^++]];",  # 4: op_4_to_num_unary
+    "R[o[^++]]=R[o[^++]]+o[^++];",  # 5: op_5_add_imm
+    "R[o[^++]]=R[o[^++]]==o[^++];",  # 6: op_6_eq_imm
+    "R[o[^++]]=R[o[^++]][o[^++]];",  # 7: op_7_getprop_imm
+    "R[o[^++]]=R[o[^++]]>>>o[^++];",  # 8: op_8_ushr_imm
+    "R[o[^++]]=new R[o[^++]]();",  # 9: op_9_new_1
+    "throw R[o[^++]];",  # 10: op_10_throw
+    "R[o[^++]][o[^++]]=R[o[^++]];return R[o[^++]];",  # 11: op_11_setprop_ret
+    "R[o[^++]]=R[o[^++]][call](Q);",  # 12: op_12_call_0
+    "R[o[^++]]=R[o[^++]][R[o[^++]]];R[o[^++]]=R[o[^++]][call](R[o[^++]],R[o[^++]]);",  # 13: op_13_getprop_call
+    "R[o[^++]]=R[o[^++]]>R[o[^++]];",  # 14: op_14_gt_reg
+    "R[o[^++]]=R[o[^++]]==R[o[^++]];",  # 15: op_15_eq_reg
+    "R[o[^++]]=R[o[^++]];R[o[^++]][R[o[^++]]]=R[o[^++]];",  # 16: op_16_setprop2
+    "return R[o[^++]];",  # 17: op_17_ret
+    "R[o[^++]]=R[o[^++]][o[^++]];R[o[^++]]=R[o[^++]][o[^++]];",  # 18: op_18_getprop2
+    "R[o[^++]]=U;R[o[^++]]=R[o[^++]];C[push](K+o[^++]);",  # 19: op_19_catch_setup
+    "R[o[^++]]=R[o[^++]][call](R[o[^++]],R[o[^++]],R[o[^++]],R[o[^++]]);",  # 20: op_20_call_3
+    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]+=String[fromCharCode](o[^++]);",  # 21: op_21_str_char2
+    "R[o[^++]]=typeofR[o[^++]];",  # 22: op_22_typeof
+    "R[o[^++]]=R[o[^++]]<R[o[^++]];",  # 23: op_23_lt_reg
+    "R[o[^++]]=R[o[^++]]>>o[^++];",  # 24: op_24_sar_imm
+    "R[o[^++]]=R[o[^++]];C[push](K+o[^++]);",  # 25: op_25_push_catch
+    "R[o[^++]]=R[o[^++]];",  # 26: op_26_mov
+    "R[o[^++]]=-R[o[^++]];",  # 27: op_27_neg
+    "R[o[^++]]='';R[o[^++]]+=String[fromCharCode](o[^++]);",  # 28: op_28_str_init_char
+    "C[pop]();",  # 29: op_29_pop_catch
+    "R[o[^++]]=R[o[^++]]|o[^++];",  # 30: op_30_or_imm
+    "R[o[^++]]=R[o[^++]]*R[o[^++]];",  # 31: op_31_mul_reg
+    "R[o[^++]]=R[o[^++]]<<R[o[^++]];",  # 32: op_32_shl_reg
+    "R[o[^++]]=R[o[^++]]|R[o[^++]];",  # 33: op_33_or_reg
+    "R[o[^++]]=R[o[^++]][R[o[^++]]];R[o[^++]]=o[^++];",  # 34: op_34_getprop_idx
+    "R[o[^++]]=R[o[^++]]inR[o[^++]];",  # 35: op_35_in
+    "R[o[^++]]=!R[o[^++]];",  # 36: op_36_not
+    "R[o[^++]]='';",  # 37: op_37_str_init
+    "R[o[^++]][R[o[^++]]]=R[o[^++]];R[o[^++]][R[o[^++]]]=R[o[^++]];R[o[^++]]=Q;",  # 38: op_38_setprop2_ctx
+    "R[o[^++]]=R[o[^++]][call](R[o[^++]]);",  # 39: op_39_call_1
+    "w=R[o[^++]];;",  # 40: op_40_array_iter
+    "R[o[^++]]=R[o[^++]][call](Q,R[o[^++]]);R[o[^++]]=R[o[^++]];",  # 41: op_41_call_1_save
+    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]][o[^++]]=R[o[^++]];",  # 42: op_42_str_char_set
+    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]][o[^++]]=R[o[^++]];R[o[^++]]='';",  # 43: op_43_str_char_set_clr
+    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]=;R[o[^++]]='';",  # 44: op_44_str_char_obj
+    "R[o[^++]]=R[o[^++]]>=o[^++];",  # 45: op_45_ge_imm
+    "R[o[^++]]=U;",  # 46: op_46_load_exc
+    "R[o[^++]]=R[o[^++]][R[o[^++]]];R[o[^++]]='';R[o[^++]]+=String[fromCharCode](o[^++]);",  # 47: op_47_str_char_prop
+    "R[o[^++]]=o[^++];",  # 48: op_48_load_imm
+    "R[o[^++]]='bigint'==typeofR[o[K+1]]?(R[o[^++]]):(R[o[^++]]-0);R[o[^++]]=^++;R[o[^++]]=R[o[^++]];",  # 49: op_49_inc_copy
+    "R[o[^++]][R[o[^++]]]=R[o[^++]];R[o[^++]]=Q;return R[o[^++]];",  # 50: op_50_setprop_ret_ctx
+    "R[o[^++]]=Q;",  # 51: op_51_load_ctx
+    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]=R[o[^++]][R[o[^++]]];",  # 52: op_52_str_char_prop2
+    "R[o[^++]]=R[o[^++]]===o[^++];",  # 53: op_53_seq_imm
+    "R[o[^++]]=R[o[^++]]/R[o[^++]];",  # 54: op_54_div_reg
+    "R[o[^++]]=R[o[^++]]%R[o[^++]];",  # 55: op_55_mod_reg
+    "w=[];for in;R[o[^++]]=w;",  # 56: op_56_keys
+    "w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;",  # 57: op_57_func_create
+    "R[o[^++]]=R[o[^++]];R[o[^++]]=R[o[^++]];",  # 58: op_58_dup2
+    "R[o[^++]]=R[o[^++]]&o[^++];",  # 59: op_59_and_imm
+    "R[o[^++]]=o[^++]-R[o[^++]];",  # 60: op_60_sub_imm_rev
+    "R[o[^++]]=R[o[^++]]-R[o[^++]];",  # 61: op_61_sub_reg
+    "R[o[^++]]=new R[o[^++]]();",  # 62: op_62_new_0
+    "R[o[^++]]=R[o[^++]][call](Q,R[o[^++]],R[o[^++]],R[o[^++]]);",  # 63: op_63_call_3_ctx
+    "R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]+=String[fromCharCode](o[^++]);R[o[^++]]+=String[fromCharCode](o[^++]);",  # 64: op_64_str_char3
+    "R[o[^++]]=R[o[^++]][call](Q,R[o[^++]]);",  # 65: op_65_call_1_ctx
+    "R[o[^++]]=null;",  # 66: op_66_load_null
+    "R[o[^++]]=R[o[^++]]===R[o[^++]];",  # 67: op_67_seq_reg
+    "w=[];for;R[o[^++]]=R[o[^++]][apply](R[o[^++]],w);",  # 68: op_68_apply
+    "R[o[^++]][o[^++]]=R[o[^++]];",  # 69: op_69_setprop_imm
+    "R[o[^++]]+=String[fromCharCode](o[^++]);w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;R[o[^++]][R[o[^++]]]=R[o[^++]];",  # 70: op_70_str_func_prop
+    "R[o[^++]]=R[o[^++]]<<o[^++];",  # 71: op_71_shl_imm
+    "R[o[^++]]=R[o[^++]]>>R[o[^++]];",  # 72: op_72_sar_reg
+    "R[o[^++]]+=String[fromCharCode](o[^++]);",  # 73: op_73_str_char
+    "R[o[^++]]=deleteR[o[^++]][R[o[^++]]];",  # 74: op_74_delprop
+    "w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;R[o[^++]][o[^++]]=R[o[^++]];w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;",  # 75: op_75_func_create2
+    "K+=o[^++];",  # 76: op_76_jmp
+    "R[o[^++]][o[^++]]=R[o[^++]];w=[];for;R[o[^++]]=S(K+o[^++],w,Y,I,G);;R[o[^++]][o[^++]]=R[o[^++]];",  # 77: op_77_func_method
+    "R[o[^++]]=R[o[^++]][call](R[o[^++]],R[o[^++]],R[o[^++]]);",  # 78: op_78_call_2
+    "R[o[^++]]=R[o[^++]]-o[^++];",  # 79: op_79_sub_imm
+    "R[o[^++]]=o[^++];R[o[^++]]=R[o[^++]][call](Q,R[o[^++]]);R[o[^++]]=R[o[^++]];",  # 80: op_80_load_call
+    "R[o[^++]]=R[o[^++]]>o[^++];",  # 81: op_81_gt_imm
+    "R[o[^++]]=R[o[^++]][call](R[o[^++]],R[o[^++]]);",  # 82: op_82_call_2_dyn
+    "R[o[^++]]=^++;",  # 83: op_83_pre_inc
+    "R[o[^++]][R[o[^++]]]=R[o[^++]];",  # 84: op_84_setprop_dyn
+    "R[o[^++]]=Array(o[^++]);",  # 85: op_85_array_new
+    "R[o[^++]]=;",  # 86: op_86_obj_new
+    "R[o[^++]]=R[o[^++]]^R[o[^++]];",  # 87: op_87_xor_reg
+    "R[o[^++]]=R[o[^++]]<o[^++];",  # 88: op_88_lt_imm
+    "R[o[^++]]=new R[o[^++]]();",  # 89: op_89_new_2
+    "R[o[^++]][R[o[^++]]]=R[o[^++]];R[o[^++]]=R[o[^++]][R[o[^++]]];R[o[^++]]=o[^++];",  # 90: op_90_setprop_get
+    "R[o[^++]]=R[o[^++]][R[o[^++]]];",  # 91: op_91_getprop_dyn
+    "R[o[^++]]=^--;",  # 92: op_92_pre_dec
+    "R[o[^++]]=Q;return R[o[^++]];",  # 93: op_93_ret_ctx
+    "R[o[^++]]=R[o[^++]][call](Q,R[o[^++]],R[o[^++]]);",  # 94: op_94_call_2_ctx
+    "R[o[^++]]=R[o[^++]]<=o[^++];",  # 95: op_95_le_imm
 )
 
 SWITCH_OP_FEATS: tuple[str, ...] = (
-    "66a31c709b8469311d072f534b9d6e68",  # 0: op_0
-    "5ecc08f1ba8326e10af9c6d6ab320c73",  # 1: op_1
-    "4e8610aa10731e87d168a44e17ef701b",  # 2: op_2
-    "0449ff687d0bd36cb90762850e3712bf",  # 3: op_3
-    "e8bab1feaaa36c01b00c4cea08ca62e4",  # 4: op_4
-    "e81fa63ca089c5fd31a18831a4ce19d2",  # 5: op_5
-    "032acf1a9f283ef642c8c1bc029b8521",  # 6: op_6
-    "37c01b863a6156bddffde924fbe4d54e",  # 7: op_7
-    "5b7c42f48afd99ed6b8ed5b5a7c9eb15",  # 8: op_8
-    "402af1be755b608220943ffe1ed3df25",  # 9: op_9
-    "3dfb0c9f87d936cc5f60c293c34c262c",  # 10: op_10
-    "5cbcc529e1c418d64e8fc07acfeaa5a0",  # 11: op_11
-    "d6b090fd71d1d8af8feea7319feea7ee",  # 12: op_12
-    "f3c47c3d14f046018a6b171452bfaffd",  # 13: op_13
-    "614f11d9e48a6116a06a0cfb2f8c8533",  # 14: op_14
-    "6a78ac327de94a5bc115d0cb30696ffe",  # 15: op_15
-    "aa3ec94e2240bd72848a02508793459c",  # 16: op_16
-    "c822ed5c17ab959524cfa4a807907a68",  # 17: op_17
-    "0746ae4c7124026b403ebdfe4acbbada",  # 18: op_18
-    "fe36e995c181b44a03678c4779200b6b",  # 19: op_19
-    "cdc1b67d74452b0f0bc91a51ba5bd00e",  # 20: op_20
-    "ddb8c99d56fd758164a0b356c69c0e80",  # 21: op_21
-    "71128c2ec6b9f8a1f5f7dbd47e8a9a20",  # 22: op_22
-    "6ca5645c991fbe1fcbfe2b249ee0012e",  # 23: op_23
-    "984a9c69a541ccea9a2cdc0e296e98d7",  # 24: op_24
-    "ebbece07c0b156e4bbae9bb2cb85a3f3",  # 25: op_25
-    "a2fcb8a956dfb954ccb6399010d61d80",  # 26: op_26
-    "e28661e9057e176ddd73d9d2e2a05093",  # 27: op_27
-    "0cc49d836503b0ddf50e9feca121761d",  # 28: op_28
-    "dc848ae1144459565f885f8d6cf658ae",  # 29: op_29
-    "b3bd8514a69a1e6565e015872ccd8527",  # 30: op_30
-    "beb964188a53a0baaaea5e71403b06a8",  # 31: op_31
-    "9b93b7e9f94e4270d493cd02fadd3fae",  # 32: op_32
-    "5f329db03b9f23bd448a84277dd462b5",  # 33: op_33
-    "8c0fdc931cc975ecb9be84322b204d4d",  # 34: op_34
-    "dca134d575435587f88df624ca274e27",  # 35: op_35
-    "9fb7476e5398a8164f6ff44277b8fb14",  # 36: op_36
-    "5aa2451eca1fc7aa41fec8721a249363",  # 37: op_37
-    "e4a5c453a3315ca202ddc66c53d86e16",  # 38: op_38
-    "4a32f164197a627c05cdefa835e3520e",  # 39: op_39
-    "a3c1f9517d918a694dfcb85811b69cf4",  # 40: op_40
-    "2036d83665b44d6a437fdf47ffdf8f71",  # 41: op_41
-    "03069ab1c40e3ef7d09e43a294b6954d",  # 42: op_42
-    "0be9f57c41acc0e9eb8361aa411584d6",  # 43: op_43
-    "1ee661b494c1e3486def5d87a5afd547",  # 44: op_44
-    "5fe7020578190763f446914833bcb5b2",  # 45: op_45
-    "2525fdc0e47aac3c178bb8d5e1d46fea",  # 46: op_46
-    "533c435f270cf01427075094b83e01cc",  # 47: op_47
-    "31e8d49b43bbabbe574e417f88c9680c",  # 48: op_48
-    "34908e71e0026cc14f02e52c5b0db76e",  # 49: op_49
-    "18b6d6b29a9c26bf1d1556fa1854d9d0",  # 50: op_50
-    "f573320c21d8c3d577120dff5f6cf0d4",  # 51: op_51
-    "585bab72147602c449c362c5c2aaf26a",  # 52: op_52
-    "b3d08c2b24cdb3e579fee1bb5a5c0c20",  # 53: op_53
-    "6a2682fe4cfc4d706671743e4ec28eed",  # 54: op_54
-    "2b4908efd8bdc3ba2b00ae65afac1318",  # 55: op_55
-    "acb72e4e45749a73be0db5f628d4b1d7",  # 56: op_56
-    "e9f9f945bc1c63c88eeb3b4dfb906405",  # 57: op_57
-    "4e5ec5af96ddefde5d86c2d105cd5816",  # 58: op_58
-    "af0976e1e2cd130947fe4e6f70c272f9",  # 59: op_59
-    "16d0bae608eb749e3ef6d6a0ab4cf658",  # 60: op_60
-    "6bdc29d682fc0df5925076f7191742d0",  # 61: op_61
-    "402af1be755b608220943ffe1ed3df25",  # 62: op_62
-    "839d9ad98e80ae20aa6c63e00b84ee90",  # 63: op_63
-    "cca7fe21ff78f1a355f2abc06501df51",  # 64: op_64
-    "71b5eae75deae4a84994f793f21f60b4",  # 65: op_65
-    "7706bda2a976f4303cec745a119e69d2",  # 66: op_66
-    "a5940e4f34671aac8b5343cbd3c79f40",  # 67: op_67
-    "c15f24b95304cf9f2258101a6a2617c6",  # 68: op_68
-    "303c75aadb8cb222910dc6aa7253ae56",  # 69: op_69
-    "5ec7b45b21e757c836d03229858b9b0e",  # 70: op_70
-    "7e2229e649b207931119307795275588",  # 71: op_71
-    "0660f53f391f166d6a1c836c22a77b07",  # 72: op_72
-    "d26163c10471a63f07a2c81929b89c8c",  # 73: op_73
-    "1ba1427f0205910645f9be104e10df2d",  # 74: op_74
-    "29a1202d04e9d59492136a86b447c1cd",  # 75: op_75
-    "d6576ea6223139fb6718a782f49fcb3b",  # 76: op_76
-    "f779fd7f4da9ecc79bdf758d14e4141a",  # 77: op_77
-    "7ad15661b39f047afc86b5a2c842fc21",  # 78: op_78
-    "1072ba343adc3d2bce2759fe3a614fd9",  # 79: op_79
-    "04828a0d878c427fc47d1827643b06e6",  # 80: op_80
-    "8c0f654a947b3fed3b560be305bee8ac",  # 81: op_81
-    "5fc9a25e8f333f9718c25252fe539dd8",  # 82: op_82
-    "80d00cd777288ade75f8ab43da925554",  # 83: op_83
-    "d6e3c1ffe9f7da63c97a41a78ae50f81",  # 84: op_84
-    "0103d2fd25219d95c23489c98316d422",  # 85: op_85
-    "cc9eaf884af2751a35d081353fc90476",  # 86: op_86
-    "fc25799979e57affccbc9a52c72f8e6b",  # 87: op_87
-    "76e7bf97a8718228eadecb5ec3ac9042",  # 88: op_88
-    "402af1be755b608220943ffe1ed3df25",  # 89: op_89
-    "23a0bab6db053c269bc3aa06af0f91e2",  # 90: op_90
-    "3db6b9e235cf01ec3112d107b11c1454",  # 91: op_91
-    "dc4237fba837cd19faba6244092bf3aa",  # 92: op_92
-    "9266d19bded915e102d9d3c671f60d82",  # 93: op_93
-    "fbca2703a0d608e4253b58ff14198d01",  # 94: op_94
-    "77d06360309a4fbf4f8cddd7f8eaaec0",  # 95: op_95
+    "66a31c709b8469311d072f534b9d6e68",  # 0: op_0_add_reg
+    "5ecc08f1ba8326e10af9c6d6ab320c73",  # 1: op_1_jcond
+    "4e8610aa10731e87d168a44e17ef701b",  # 2: op_2_to_num
+    "0449ff687d0bd36cb90762850e3712bf",  # 3: op_3_push_ret
+    "e8bab1feaaa36c01b00c4cea08ca62e4",  # 4: op_4_to_num_unary
+    "e81fa63ca089c5fd31a18831a4ce19d2",  # 5: op_5_add_imm
+    "032acf1a9f283ef642c8c1bc029b8521",  # 6: op_6_eq_imm
+    "37c01b863a6156bddffde924fbe4d54e",  # 7: op_7_getprop_imm
+    "5b7c42f48afd99ed6b8ed5b5a7c9eb15",  # 8: op_8_ushr_imm
+    "402af1be755b608220943ffe1ed3df25",  # 9: op_9_new_1
+    "3dfb0c9f87d936cc5f60c293c34c262c",  # 10: op_10_throw
+    "5cbcc529e1c418d64e8fc07acfeaa5a0",  # 11: op_11_setprop_ret
+    "d6b090fd71d1d8af8feea7319feea7ee",  # 12: op_12_call_0
+    "f3c47c3d14f046018a6b171452bfaffd",  # 13: op_13_getprop_call
+    "614f11d9e48a6116a06a0cfb2f8c8533",  # 14: op_14_gt_reg
+    "6a78ac327de94a5bc115d0cb30696ffe",  # 15: op_15_eq_reg
+    "aa3ec94e2240bd72848a02508793459c",  # 16: op_16_setprop2
+    "c822ed5c17ab959524cfa4a807907a68",  # 17: op_17_ret
+    "0746ae4c7124026b403ebdfe4acbbada",  # 18: op_18_getprop2
+    "fe36e995c181b44a03678c4779200b6b",  # 19: op_19_catch_setup
+    "cdc1b67d74452b0f0bc91a51ba5bd00e",  # 20: op_20_call_3
+    "ddb8c99d56fd758164a0b356c69c0e80",  # 21: op_21_str_char2
+    "71128c2ec6b9f8a1f5f7dbd47e8a9a20",  # 22: op_22_typeof
+    "6ca5645c991fbe1fcbfe2b249ee0012e",  # 23: op_23_lt_reg
+    "984a9c69a541ccea9a2cdc0e296e98d7",  # 24: op_24_sar_imm
+    "ebbece07c0b156e4bbae9bb2cb85a3f3",  # 25: op_25_push_catch
+    "a2fcb8a956dfb954ccb6399010d61d80",  # 26: op_26_mov
+    "e28661e9057e176ddd73d9d2e2a05093",  # 27: op_27_neg
+    "0cc49d836503b0ddf50e9feca121761d",  # 28: op_28_str_init_char
+    "dc848ae1144459565f885f8d6cf658ae",  # 29: op_29_pop_catch
+    "b3bd8514a69a1e6565e015872ccd8527",  # 30: op_30_or_imm
+    "beb964188a53a0baaaea5e71403b06a8",  # 31: op_31_mul_reg
+    "9b93b7e9f94e4270d493cd02fadd3fae",  # 32: op_32_shl_reg
+    "5f329db03b9f23bd448a84277dd462b5",  # 33: op_33_or_reg
+    "8c0fdc931cc975ecb9be84322b204d4d",  # 34: op_34_getprop_idx
+    "dca134d575435587f88df624ca274e27",  # 35: op_35_in
+    "9fb7476e5398a8164f6ff44277b8fb14",  # 36: op_36_not
+    "5aa2451eca1fc7aa41fec8721a249363",  # 37: op_37_str_init
+    "e4a5c453a3315ca202ddc66c53d86e16",  # 38: op_38_setprop2_ctx
+    "4a32f164197a627c05cdefa835e3520e",  # 39: op_39_call_1
+    "a3c1f9517d918a694dfcb85811b69cf4",  # 40: op_40_array_iter
+    "2036d83665b44d6a437fdf47ffdf8f71",  # 41: op_41_call_1_save
+    "03069ab1c40e3ef7d09e43a294b6954d",  # 42: op_42_str_char_set
+    "0be9f57c41acc0e9eb8361aa411584d6",  # 43: op_43_str_char_set_clr
+    "1ee661b494c1e3486def5d87a5afd547",  # 44: op_44_str_char_obj
+    "5fe7020578190763f446914833bcb5b2",  # 45: op_45_ge_imm
+    "2525fdc0e47aac3c178bb8d5e1d46fea",  # 46: op_46_load_exc
+    "533c435f270cf01427075094b83e01cc",  # 47: op_47_str_char_prop
+    "31e8d49b43bbabbe574e417f88c9680c",  # 48: op_48_load_imm
+    "34908e71e0026cc14f02e52c5b0db76e",  # 49: op_49_inc_copy
+    "18b6d6b29a9c26bf1d1556fa1854d9d0",  # 50: op_50_setprop_ret_ctx
+    "f573320c21d8c3d577120dff5f6cf0d4",  # 51: op_51_load_ctx
+    "585bab72147602c449c362c5c2aaf26a",  # 52: op_52_str_char_prop2
+    "b3d08c2b24cdb3e579fee1bb5a5c0c20",  # 53: op_53_seq_imm
+    "6a2682fe4cfc4d706671743e4ec28eed",  # 54: op_54_div_reg
+    "2b4908efd8bdc3ba2b00ae65afac1318",  # 55: op_55_mod_reg
+    "acb72e4e45749a73be0db5f628d4b1d7",  # 56: op_56_keys
+    "e9f9f945bc1c63c88eeb3b4dfb906405",  # 57: op_57_func_create
+    "4e5ec5af96ddefde5d86c2d105cd5816",  # 58: op_58_dup2
+    "af0976e1e2cd130947fe4e6f70c272f9",  # 59: op_59_and_imm
+    "16d0bae608eb749e3ef6d6a0ab4cf658",  # 60: op_60_sub_imm_rev
+    "6bdc29d682fc0df5925076f7191742d0",  # 61: op_61_sub_reg
+    "402af1be755b608220943ffe1ed3df25",  # 62: op_62_new_0
+    "839d9ad98e80ae20aa6c63e00b84ee90",  # 63: op_63_call_3_ctx
+    "cca7fe21ff78f1a355f2abc06501df51",  # 64: op_64_str_char3
+    "71b5eae75deae4a84994f793f21f60b4",  # 65: op_65_call_1_ctx
+    "7706bda2a976f4303cec745a119e69d2",  # 66: op_66_load_null
+    "a5940e4f34671aac8b5343cbd3c79f40",  # 67: op_67_seq_reg
+    "c15f24b95304cf9f2258101a6a2617c6",  # 68: op_68_apply
+    "303c75aadb8cb222910dc6aa7253ae56",  # 69: op_69_setprop_imm
+    "5ec7b45b21e757c836d03229858b9b0e",  # 70: op_70_str_func_prop
+    "7e2229e649b207931119307795275588",  # 71: op_71_shl_imm
+    "0660f53f391f166d6a1c836c22a77b07",  # 72: op_72_sar_reg
+    "d26163c10471a63f07a2c81929b89c8c",  # 73: op_73_str_char
+    "1ba1427f0205910645f9be104e10df2d",  # 74: op_74_delprop
+    "29a1202d04e9d59492136a86b447c1cd",  # 75: op_75_func_create2
+    "d6576ea6223139fb6718a782f49fcb3b",  # 76: op_76_jmp
+    "f779fd7f4da9ecc79bdf758d14e4141a",  # 77: op_77_func_method
+    "7ad15661b39f047afc86b5a2c842fc21",  # 78: op_78_call_2
+    "1072ba343adc3d2bce2759fe3a614fd9",  # 79: op_79_sub_imm
+    "04828a0d878c427fc47d1827643b06e6",  # 80: op_80_load_call
+    "8c0f654a947b3fed3b560be305bee8ac",  # 81: op_81_gt_imm
+    "5fc9a25e8f333f9718c25252fe539dd8",  # 82: op_82_call_2_dyn
+    "80d00cd777288ade75f8ab43da925554",  # 83: op_83_pre_inc
+    "d6e3c1ffe9f7da63c97a41a78ae50f81",  # 84: op_84_setprop_dyn
+    "0103d2fd25219d95c23489c98316d422",  # 85: op_85_array_new
+    "cc9eaf884af2751a35d081353fc90476",  # 86: op_86_obj_new
+    "fc25799979e57affccbc9a52c72f8e6b",  # 87: op_87_xor_reg
+    "76e7bf97a8718228eadecb5ec3ac9042",  # 88: op_88_lt_imm
+    "402af1be755b608220943ffe1ed3df25",  # 89: op_89_new_2
+    "23a0bab6db053c269bc3aa06af0f91e2",  # 90: op_90_setprop_get
+    "3db6b9e235cf01ec3112d107b11c1454",  # 91: op_91_getprop_dyn
+    "dc4237fba837cd19faba6244092bf3aa",  # 92: op_92_pre_dec
+    "9266d19bded915e102d9d3c671f60d82",  # 93: op_93_ret_ctx
+    "fbca2703a0d608e4253b58ff14198d01",  # 94: op_94_call_2_ctx
+    "77d06360309a4fbf4f8cddd7f8eaaec0",  # 95: op_95_le_imm
 )
 
 # fmt: on
