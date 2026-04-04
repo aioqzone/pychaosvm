@@ -1,7 +1,7 @@
 """Funarr-style VM implementation (58 opcodes).
 
 This VM uses a stack-based model with function array dispatch,
-matching the structure in js/snippet/U.js.
+matching the structure in js/template/funarr_pattern.js.
 """
 
 from __future__ import annotations

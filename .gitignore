@@ -13,9 +13,7 @@ node_modules
 package*.json
 
 /js/*
-!js/snippet
-js/snippet/*
-!js/snippet/U.js
+!js/template
 
 AGENTS.md
 .agents

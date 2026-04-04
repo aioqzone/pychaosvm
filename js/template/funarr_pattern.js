@@ -1,7 +1,8 @@
-[function () {  // getattr
-    var R = Y.pop();
-    Y.push(R[0][R[1]])
-}
+[
+    function () {  // getattr
+        var R = Y.pop();
+        Y.push(R[0][R[1]])
+    }
     , function () {     // inst
         Y.push(B[k++])
     }
