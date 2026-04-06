@@ -262,7 +262,7 @@ wheels = [
 
 [[package]]
 name = "pychaosvm"
-version = "0.7.3.dev3"
+version = "0.7.3.dev4"
 source = { editable = "." }
 dependencies = [
     { name = "lxml" },

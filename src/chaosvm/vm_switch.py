@@ -6,12 +6,14 @@ matching the structure in js/snippet/switch.js.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, Tuple
+from typing import TYPE_CHECKING, Any, List, Tuple, TypeVar, overload
 
 from chaosvm.opfeats import SWITCH_OP_FEATS, SWITCH_OP_NAMES
 
-from .proxy.dom import ProxyException
+from .proxy.dom import Function, ProxyException
 from .vm_unified import UnifiedOps
+
+_T = TypeVar("_T")
 
 
 class ReturnException(Exception):
@@ -51,15 +53,20 @@ class SwitchOps(UnifiedOps):
     window: Window
     err: Any  # U in JS
 
-    # Temporary workspace (w in JS)
     w: List[Any]
-    # Temporary counter (T in JS)
+    """Temporary workspace (w in JS)"""
     T: int
+    """Temporary counter (T in JS)"""
+
     # Exception handling state
-    exc_addrs: List[int]  # A in JS - address list for exceptions
-    saved_pc: int  # B in JS - saved pc on exception
-    global_handler: Any  # G in JS
-    return_value: Any  # Return value storage
+    exc_addrs: List[int]
+    """A in JS - address list for exceptions"""
+    saved_pc: int
+    """B in JS - saved pc on exception"""
+    global_handler: Any
+    """G in JS"""
+    return_value: Any
+    """Return value storage"""
 
     def __init__(
         self,
@@ -68,12 +75,14 @@ class SwitchOps(UnifiedOps):
         window: Window,
         opmap: dict[int, int],
         stack: List[Any] | None = None,
+        constants: list | None = None,
         global_handler: Any = None,  # G in JS
     ) -> None:
         self.pc = pc
         self.opcode = opcodes
         self.window = window
         self.opmap = opmap
+        self.constants = constants
         self.call_stack: List[int] = []  # C in JS
         self.err: Any = None  # U in JS
         self.w: List[Any] = []  # w in JS
@@ -85,12 +94,24 @@ class SwitchOps(UnifiedOps):
         self.global_handler = global_handler  # G in JS
         self.return_value: Any = None  # Return value storage
 
-        # Initialize register file (preallocate 256 slots) - R in JS
+        # Initialize register file - R in JS
         if stack is not None:
             self.stack = stack
         else:
-            self.stack = [None] * 256
-            self.stack[0] = [window]  # R[0] = [window]
+            self.stack = [
+                window,
+                constants or [],
+                [],
+                self.window,
+                [],
+                self.window,
+                self.opcode,
+                0,
+            ]
+
+        # preallocate 256 slots
+        if len(self.stack) < 256:
+            self.stack += [None] * (256 - len(self.stack))
 
         # Verify opmap matches expected features
         self._verify_opmap()
@@ -103,21 +124,29 @@ class SwitchOps(UnifiedOps):
             if func_idx >= len(SWITCH_OP_NAMES):
                 raise RuntimeError(f"Opmap index {func_idx} out of range")
 
-    def _curcode(self) -> int:
-        """Read next bytecode and advance PC (o[++K] in JS).
+    @overload
+    def _curcode(self) -> int: ...
 
-        Note: JS uses ++K which increments K first, then uses as index.
-        """
-        self.pc += 1
-        return self.opcode[self.pc]
+    @overload
+    def _curcode(self, n: int) -> tuple[int, ...]: ...
+
+    def _curcode(self, n: int = 1) -> int | tuple[int, ...]:
+        """Read next bytecode and advance PC (o[++K] in JS)."""
+        if n == 1:
+            i = self.opcode[self.pc]
+        else:
+            i = self.opcode[self.pc : self.pc + n]
+        self.pc += n
+        return i
 
     def _get_reg(self, idx: int) -> Any:
         """Get register value (R[idx])."""
         return self.stack[idx]
 
-    def _set_reg(self, idx: int, value: Any) -> None:
+    def _set_reg(self, idx: int, value: _T) -> _T:
         """Set register value (R[idx] = value)."""
         self.stack[idx] = value
+        return value
 
     # =====================================================
     #                   Arithmetic Operations
@@ -599,18 +628,14 @@ class SwitchOps(UnifiedOps):
 
     def op_19_catch_setup(self) -> None:
         """19: CATCH_SETUP R[a] = U; R[b] = R[c]; C.push(K + imm)"""
-        exc_reg = self._curcode()
-        copy_reg = self._curcode()
-        offset = self._curcode()
+        exc_reg, dst_reg, src_reg, offset = self._curcode(4)
         self._set_reg(exc_reg, self.err)
-        self._set_reg(copy_reg, self._get_reg(copy_reg))
+        self._set_reg(dst_reg, self._get_reg(src_reg))
         self.call_stack.append(self.pc + offset)
 
     def op_25_push_catch(self) -> None:
         """25: PUSH_CATCH R[a] = R[b]; C.push(K + imm)"""
-        dst = self._curcode()
-        src = self._curcode()
-        offset = self._curcode()
+        dst, src, offset = self._curcode(3)
         self._set_reg(dst, self._get_reg(src))
         self.call_stack.append(self.pc + offset)
 
@@ -884,39 +909,34 @@ class SwitchOps(UnifiedOps):
         self._set_reg(clear_reg, "")
 
     def op_47_str_char_prop(self) -> None:
-        """47: STR_CHAR_PROP Append and get property"""
+        """47: STR_CHAR_PROP Get property, clear, then append"""
+        # Get property
+        dst, obj, attr = self._curcode(3)
+        self._set_reg(dst, self._getattr(self._get_reg(obj), self._get_reg(attr)))
+
+        # Clear register
+        self._set_reg(self._curcode(), "")
+
         # String append
-        str_reg = self._curcode()
-        char = self._curcode()
-        self._set_reg(str_reg, self._concat_char(self._get_reg(str_reg), char))
-        # Property get
-        dst = self._curcode()
-        obj_reg = self._curcode()
-        attr_reg = self._curcode()
-        self._set_reg(dst, self._getattr(self._get_reg(obj_reg), self._get_reg(attr_reg)))
+        cat, char = self._curcode(2)
+        self._set_reg(cat, self._concat_char(self._get_reg(cat), char))
 
     def op_49_inc_copy(self) -> None:
         """49: INC_COPY Complex increment and copy"""
         # Convert to number
-        dst1 = self._curcode()
-        src1 = self._curcode()
+        dst1, src1 = self._curcode(2)
         self._set_reg(dst1, self._to_num(self._get_reg(src1)))
         # Increment
-        dst2 = self._curcode()
-        src2 = self._curcode()
-        val = self._get_reg(src2)
-        self._set_reg(dst2, val + 1)
+        dst2, src2 = self._curcode(2)
+        self._set_reg(dst2, self._get_reg(src2) + 1)
         # Copy
-        dst3 = self._curcode()
-        src3 = self._curcode()
+        dst3, src3 = self._curcode(2)
         self._set_reg(dst3, self._get_reg(src3))
 
     def op_50_setprop_ret_ctx(self) -> None:
         """50: SETPROP_RET_CTX R[a][R[b]] = R[c]; R[d] = Q; return R[e]"""
         # Set property
-        obj_reg = self._curcode()
-        attr_reg = self._curcode()
-        val_reg = self._curcode()
+        obj_reg, attr_reg, val_reg = self._curcode(3)
         self._setattr(self._get_reg(obj_reg), self._get_reg(attr_reg), self._get_reg(val_reg))
         # Load context
         ctx_reg = self._curcode()
@@ -942,16 +962,36 @@ class SwitchOps(UnifiedOps):
         """57: FUNC_CREATE Create function"""
         # Collect parameters
         argc = self._curcode()
-        for _ in range(argc):
-            self.w.append(self._get_reg(self._curcode()))
+        if argc == 1:
+            self.w = [self._get_reg(self._curcode())]
+        else:
+            self.w = [self._get_reg(i) for i in self._curcode(argc)]
         # Create function
         dst = self._curcode()
         pc_offset = self._curcode()
-        # TODO: Create actual function object
-        self._set_reg(dst, lambda: None)
-        # Length property
-        length = self._curcode()
-        # Object.defineProperty would go here
+
+        # Create function object
+        def vm_factory(pc, E, window, constants, G) -> Function:
+            arguments = []
+            F = Function(lambda *args: arguments.extend(args), self.window)
+            stack = [window, constants, E, F, arguments, F, self.opcode, 0]
+            vm = SwitchOps(pc, self.opcode, self.window, self.opmap, stack, constants, G)
+            F.__f__ = vm.execute
+            return F
+
+        f = Function(
+            vm_factory(
+                self.pc + pc_offset, self.w, self.window, self.constants, self.global_handler
+            ),
+            self.window,
+        )
+        f.length = {
+            "value": self._curcode(),
+            "configurable": True,
+            "writable": False,
+            "enumerable": False,
+        }
+        self._set_reg(dst, f)
 
     def op_70_str_func_prop(self) -> None:
         """70: STR_FUNC_PROP String + function + property"""
@@ -960,11 +1000,7 @@ class SwitchOps(UnifiedOps):
         char = self._curcode()
         self._set_reg(str_reg, self._concat_char(self._get_reg(str_reg), char))
         # Create function
-        argc = self._curcode()
-        for _ in range(argc):
-            self.w.append(self._get_reg(self._curcode()))
-        dst = self._curcode()
-        pc_offset = self._curcode()
+        self.op_57_func_create()
         # Set property
         obj_reg = self._curcode()
         attr_reg = self._curcode()
@@ -974,25 +1010,14 @@ class SwitchOps(UnifiedOps):
     def op_75_func_create2(self) -> None:
         """75: FUNC_CREATE2 Complex function creation"""
         # Create first function
-        argc = self._curcode()
-        for _ in range(argc):
-            self.w.append(self._get_reg(self._curcode()))
-        dst = self._curcode()
-        pc_offset = self._curcode()
-        length = self._curcode()
+        self.op_57_func_create()
         # Set property
         obj_reg = self._curcode()
         attr = self._curcode()
         val_reg = self._curcode()
         self._setattr(self._get_reg(obj_reg), attr, self._get_reg(val_reg))
         # Create second function
-        self.w = []
-        argc2 = self._curcode()
-        for _ in range(argc2):
-            self.w.append(self._get_reg(self._curcode()))
-        dst2 = self._curcode()
-        pc_offset2 = self._curcode()
-        length2 = self._curcode()
+        self.op_57_func_create()
 
     def op_77_func_method(self) -> None:
         """77: FUNC_METHOD Create function and set as method"""
@@ -1002,12 +1027,7 @@ class SwitchOps(UnifiedOps):
         val_reg = self._curcode()
         self._setattr(self._get_reg(obj_reg), attr, self._get_reg(val_reg))
         # Then create function
-        argc = self._curcode()
-        for _ in range(argc):
-            self.w.append(self._get_reg(self._curcode()))
-        dst = self._curcode()
-        pc_offset = self._curcode()
-        length = self._curcode()
+        self.op_57_func_create()
         # Set as method
         obj2 = self._curcode()
         attr2 = self._curcode()
