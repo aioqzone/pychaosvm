@@ -8,9 +8,9 @@ from pytest import fixture
 @fixture(
     scope="module",
     params=[
-        # "https://t.captcha.qq.com/tdc.js?app_data=7124050803564679168&t=636313065",
-        # "https://t.captcha.qq.com/tdc.js?app_data=7411568416589221888&t=831078078&appid=2064145836",  # #94
-        # "https://t.captcha.qq.com/tdc.js?app_data=7445260126670655488&t=296700983&appid=199914328",  # #97
+        "https://t.captcha.qq.com/tdc.js?app_data=7124050803564679168&t=636313065",
+        "https://t.captcha.qq.com/tdc.js?app_data=7411568416589221888&t=831078078&appid=2064145836",  # #94
+        "https://t.captcha.qq.com/tdc.js?app_data=7445260126670655488&t=296700983&appid=199914328",  # #97
         "https://turing.captcha.qcloud.com/tdc.js?app_data=7256590633187913728",  # #58
     ],
 )

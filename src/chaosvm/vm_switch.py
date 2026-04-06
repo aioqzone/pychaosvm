@@ -13,6 +13,15 @@ from chaosvm.opfeats import SWITCH_OP_FEATS, SWITCH_OP_NAMES
 from .proxy.dom import ProxyException
 from .vm_unified import UnifiedOps
 
+
+class ReturnException(Exception):
+    """Exception raised when VM executes a return instruction."""
+
+    def __init__(self, value: Any) -> None:
+        self.value = value
+        super().__init__(f"VM return with value: {value}")
+
+
 if TYPE_CHECKING:
     from .proxy.dom import Window
 
@@ -38,14 +47,19 @@ class SwitchOps(UnifiedOps):
     pc: int
     opcode: Tuple[int, ...]
     stack: List[Any]  # Acts as register file R
-    call_stack: List[Any]
+    call_stack: List[int]  # C in JS
     window: Window
-    err: Any
+    err: Any  # U in JS
 
     # Temporary workspace (w in JS)
     w: List[Any]
     # Temporary counter (T in JS)
     T: int
+    # Exception handling state
+    exc_addrs: List[int]  # A in JS - address list for exceptions
+    saved_pc: int  # B in JS - saved pc on exception
+    global_handler: Any  # G in JS
+    return_value: Any  # Return value storage
 
     def __init__(
         self,
@@ -54,17 +68,24 @@ class SwitchOps(UnifiedOps):
         window: Window,
         opmap: dict[int, int],
         stack: List[Any] | None = None,
+        global_handler: Any = None,  # G in JS
     ) -> None:
         self.pc = pc
         self.opcode = opcodes
         self.window = window
         self.opmap = opmap
-        self.call_stack = []
-        self.err = None
-        self.w = []
-        self.T = 0
+        self.call_stack: List[int] = []  # C in JS
+        self.err: Any = None  # U in JS
+        self.w: List[Any] = []  # w in JS
+        self.T: int = 0  # T in JS
 
-        # Initialize register file (preallocate 256 slots)
+        # Exception handling state (A and B in JS)
+        self.exc_addrs: List[int] = []  # A in JS - address list for exceptions
+        self.saved_pc: int = 0  # B in JS - saved pc on exception
+        self.global_handler = global_handler  # G in JS
+        self.return_value: Any = None  # Return value storage
+
+        # Initialize register file (preallocate 256 slots) - R in JS
         if stack is not None:
             self.stack = stack
         else:
@@ -83,10 +104,12 @@ class SwitchOps(UnifiedOps):
                 raise RuntimeError(f"Opmap index {func_idx} out of range")
 
     def _curcode(self) -> int:
-        """Read next bytecode and advance PC (o[++K])."""
-        i = self.opcode[self.pc]
+        """Read next bytecode and advance PC (o[++K] in JS).
+
+        Note: JS uses ++K which increments K first, then uses as index.
+        """
         self.pc += 1
-        return i
+        return self.opcode[self.pc]
 
     def _get_reg(self, idx: int) -> Any:
         """Get register value (R[idx])."""
@@ -434,7 +457,8 @@ class SwitchOps(UnifiedOps):
         val_reg = self._curcode()
         ret_reg = self._curcode()
         self._setattr(self._get_reg(obj_reg), attr, self._get_reg(val_reg))
-        # Return handled by execution loop
+        self.return_value = self._get_reg(ret_reg)
+        raise ReturnException(self.return_value)
 
     def op_18_getprop2(self) -> None:
         """18: GETPROP2 Two consecutive property gets"""
@@ -495,18 +519,15 @@ class SwitchOps(UnifiedOps):
     def op_40_array_iter(self) -> None:
         """40: ARRAY_ITER w = R[a]; if (w.length) R[b] = w.shift(); else ++K"""
         w_reg = self._curcode()
-        dst = self._curcode()
+        cond_reg = self._curcode()
         self.w = self._get_reg(w_reg)
-        if self.w and len(self.w) > 0:
+        has_items = bool(self.w and len(self.w) > 0)
+        self._set_reg(cond_reg, has_items)
+        if has_items:
+            dst = self._curcode()
             self._set_reg(dst, self.w.pop(0))
-            # Success case - continue to next (read condition register)
-            cond_reg = self._curcode()
-            self._set_reg(cond_reg, True)
         else:
-            # Empty - skip next instruction
-            cond_reg = self._curcode()
-            self._set_reg(cond_reg, False)
-            self.pc += 1  # Skip the instruction that would use the value
+            self.pc += 1
 
     def op_85_array_new(self) -> None:
         """85: ARRAY_NEW R[a] = Array(imm)"""
@@ -521,12 +542,11 @@ class SwitchOps(UnifiedOps):
     def op_1_jcond(self) -> None:
         """1: JCOND K += R[a] ? imm1 : imm2"""
         cond_reg = self._curcode()
-        offset_true = self._curcode()
-        offset_false = self._curcode()
         if self._get_reg(cond_reg):
-            self.pc += offset_true
+            self.pc += self._curcode()
         else:
-            self.pc += offset_false
+            self.pc += 1
+            self.pc += self._curcode()
 
     def op_76_jmp(self) -> None:
         """76: JMP K += imm"""
@@ -535,14 +555,18 @@ class SwitchOps(UnifiedOps):
 
     def op_17_ret(self) -> None:
         """17: RET return R[a]"""
-        # Return from current function - this will be handled by the execution loop
-        pass
+        src = self._curcode()
+        self.return_value = self._get_reg(src)
+        raise ReturnException(self.return_value)
 
     def op_93_ret_ctx(self) -> None:
         """93: RET_CTX R[a] = Q; return R[b]"""
         ctx_reg = self._curcode()
         self._set_reg(ctx_reg, self.window)
-        # Return handled by execution loop
+        # Return
+        ret_reg = self._curcode()
+        self.return_value = self._get_reg(ret_reg)
+        raise ReturnException(self.return_value)
 
     def op_83_pre_inc(self) -> None:
         """83: PRE_INC R[a] = ++R[b]"""
@@ -680,12 +704,16 @@ class SwitchOps(UnifiedOps):
 
     def op_68_apply(self) -> None:
         """68: APPLY R[a] = R[b].apply(R[c], w)"""
+        argc = self._curcode()
+        args = []
+        for _ in range(argc):
+            args.append(self._get_reg(self._curcode()))
         dst = self._curcode()
         func_reg = self._curcode()
         this_reg = self._curcode()
         func = self._get_reg(func_reg)
         this_val = self._get_reg(this_reg)
-        result = self._call_func(func, this_val, self.w)
+        result = self._call_func(func, this_val, args)
         self._set_reg(dst, result)
 
     # =====================================================
@@ -771,7 +799,8 @@ class SwitchOps(UnifiedOps):
         this_reg = self._curcode()
         func = self._get_reg(func_reg)
         this_val = self._get_reg(this_reg)
-        result = self._call_func(func, this_val, [])
+        arg1 = self._curcode()
+        result = self._call_func(func, this_val, [self._get_reg(arg1)])
         self._set_reg(dst, result)
 
     def op_16_setprop2(self) -> None:
@@ -883,7 +912,7 @@ class SwitchOps(UnifiedOps):
         self._set_reg(dst3, self._get_reg(src3))
 
     def op_50_setprop_ret_ctx(self) -> None:
-        """50: SETPROP_RET_CTX Set, load context, return"""
+        """50: SETPROP_RET_CTX R[a][R[b]] = R[c]; R[d] = Q; return R[e]"""
         # Set property
         obj_reg = self._curcode()
         attr_reg = self._curcode()
@@ -893,7 +922,9 @@ class SwitchOps(UnifiedOps):
         ctx_reg = self._curcode()
         self._set_reg(ctx_reg, self.window)
         # Return
-        # Handled by execution loop
+        ret_reg = self._curcode()
+        self.return_value = self._get_reg(ret_reg)
+        raise ReturnException(self.return_value)
 
     def op_52_str_char_prop2(self) -> None:
         """52: STR_CHAR_PROP Append and property access"""
@@ -1036,7 +1067,13 @@ class SwitchOps(UnifiedOps):
     # =====================================================
 
     def execute(self) -> Any:
-        """Execute the VM until completion."""
+        """Execute the VM until completion.
+
+        Matches JS implementation:
+        - K = pc, o = opcode, R = stack, C = call_stack
+        - U = err, A = exc_addrs, B = saved_pc, G = global_handler
+        - Q = window (context)
+        """
         # Build opcode dispatch table
         ops = [getattr(self, fname) for fname in SWITCH_OP_NAMES]
 
@@ -1044,21 +1081,26 @@ class SwitchOps(UnifiedOps):
             try:
                 while True:
                     opcode = self._curcode()
-                    mapped = self.opmap.get(opcode, opcode)
+                    mapped = self.opmap[opcode]
                     if mapped < len(ops) and ops[mapped]:
                         ops[mapped]()
                     else:
                         raise RuntimeError(f"Unknown opcode: {opcode} -> {mapped}")
-
-            except ProxyException:
-                if not self.call_stack:
+            except ReturnException:
+                # Return from function - exit both loops
+                return self.return_value if hasattr(self, "return_value") else None
+            except ProxyException as exc:
+                # Exception handling - matches catch(g) block in JS
+                if self.call_stack:  # C.length > 0
+                    self.saved_pc = self.pc  # B = K
+                    self.exc_addrs = []  # A = []
+                self.err = exc.value if hasattr(exc, "value") else exc  # U = g
+                self.exc_addrs.append(self.pc)  # A.push(K)
+                if not self.call_stack:  # 0 === C.length
+                    # No catch handlers - rethrow or call global handler
+                    if self.global_handler:
+                        return self.global_handler(self.err, self.stack, self.exc_addrs)
                     raise
-                # Exception handling
-                self.pc = self.call_stack.pop()
-                continue
-
-            # Normal exit
-            break
-
-        # Return value handling
-        return self.stack[0]  # Placeholder
+                # Pop catch handler and continue
+                self.pc = self.call_stack.pop()  # K = C.pop()
+                self.exc_addrs.pop()  # A.pop()

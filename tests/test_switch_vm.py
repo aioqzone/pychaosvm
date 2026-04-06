@@ -31,8 +31,8 @@ class TestOpfeats:
         assert FUNARR_OP_NAMES[-1] == "concat"
 
     def test_switch_op_names(self):
-        assert SWITCH_OP_NAMES[0] == "op_0"
-        assert SWITCH_OP_NAMES[95] == "op_95"
+        assert SWITCH_OP_NAMES[0] == "op_0_add_reg"
+        assert SWITCH_OP_NAMES[95] == "op_95_le_imm"
 
 
 class TestUnifiedOps:
@@ -148,12 +148,12 @@ class TestSwitchOpsBasic:
         window = Window()
         opmap = {i: i for i in range(96)}
         opcodes = (10, 20, 30)
-        vm = SwitchOps(0, opcodes, window, opmap)
+        vm = SwitchOps(-1, opcodes, window, opmap)  # pc=-1 to match JS semantics (o[++K])
 
         assert vm._curcode() == 10
         assert vm._curcode() == 20
         assert vm._curcode() == 30
-        assert vm.pc == 3
+        assert vm.pc == 2  # After 3 increments from -1: 2
 
 
 class TestChaosVM:
@@ -196,7 +196,7 @@ class TestSwitchInstructions:
     def vm(self):
         window = Window()
         opmap = {i: i for i in range(96)}
-        return SwitchOps(0, (0,) * 100, window, opmap)
+        return SwitchOps(-1, (0,) * 100, window, opmap)  # pc=-1 to match JS semantics (o[++K])
 
     def test_op_0_add_reg(self, vm):
         # Setup: R[1] = 5, R[2] = 3
@@ -204,7 +204,7 @@ class TestSwitchInstructions:
         vm._set_reg(2, 3)
         # Opcode: dst=3, src1=1, src2=2
         vm.opcode = (3, 1, 2)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_0_add_reg()
 
@@ -215,7 +215,7 @@ class TestSwitchInstructions:
         vm._set_reg(1, 5)
         # Opcode: dst=2, src=1, imm=10
         vm.opcode = (2, 1, 10)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_5_add_imm()
 
@@ -227,7 +227,7 @@ class TestSwitchInstructions:
         vm._set_reg(2, 5)
         # Opcode: dst=3, src1=1, src2=2
         vm.opcode = (3, 1, 2)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_15_eq_reg()
 
@@ -238,7 +238,7 @@ class TestSwitchInstructions:
         vm._set_reg(1, True)
         # Opcode: dst=2, src=1
         vm.opcode = (2, 1)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_36_not()
 
@@ -247,7 +247,7 @@ class TestSwitchInstructions:
     def test_op_48_load_imm(self, vm):
         # Opcode: dst=5, imm=42
         vm.opcode = (5, 42)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_48_load_imm()
 
@@ -256,7 +256,7 @@ class TestSwitchInstructions:
     def test_op_66_load_null(self, vm):
         # Opcode: dst=10
         vm.opcode = (10,)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_66_load_null()
 
@@ -265,7 +265,7 @@ class TestSwitchInstructions:
     def test_op_37_str_init(self, vm):
         # Opcode: dst=5
         vm.opcode = (5,)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_37_str_init()
 
@@ -276,7 +276,7 @@ class TestSwitchInstructions:
         vm._set_reg(5, "He")
         # Opcode: dst=5, char_code=108 (l)
         vm.opcode = (5, 108)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_73_str_char()
 
@@ -287,7 +287,7 @@ class TestSwitchInstructions:
         vm._set_reg(5, 10)
         # Opcode: dst=6, src=5
         vm.opcode = (6, 5)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_83_pre_inc()
 
@@ -299,7 +299,7 @@ class TestSwitchInstructions:
         vm._set_reg(5, 10)
         # Opcode: dst=6, src=5
         vm.opcode = (6, 5)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_92_pre_dec()
 
@@ -311,7 +311,7 @@ class TestSwitchInstructions:
         vm._set_reg(5, "value")
         # Opcode: dst=10, src=5
         vm.opcode = (10, 5)
-        vm.pc = 0
+        vm.pc = -1  # Match JS semantics (o[++K])
 
         vm.op_26_mov()
 
