@@ -1,0 +1,68 @@
+name: Update uv Dependencies
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  update-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+      - name: Preview updates
+        id: preview
+        env:
+          NO_COLOR: 1
+        run: |
+          set -euo pipefail
+          uv lock -U --dry-run 2>&1 | grep -E '^(Update|Add|Remove|Downgrade)' > /tmp/preview.txt || true
+          DELIM="EOF_$(date +%s)_$$"
+          {
+            echo "log<<$DELIM"
+            head -n 50 /tmp/preview.txt
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+      - name: Update lockfile
+        id: update
+        env:
+          NO_COLOR: 1
+        run: |
+          set -euo pipefail
+          uv lock -U
+          if [ -z "$(git status --porcelain uv.lock)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create Pull Request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_MERGE_PAT }}
+        run: |
+          set -euo pipefail
+          BRANCH="deps/update-uv-$(date +%Y%m%d%H%M%S)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add uv.lock
+          COMMIT_DELIM="COMMITMSG_$(date +%s)_$$"
+          git commit -F - << "$COMMIT_DELIM"
+          chore(deps): update dependencies
+
+          ${{ steps.preview.outputs.log }}
+          $COMMIT_DELIM
+          git push origin "$BRANCH"
+          PR_URL=$(gh pr create \
+            --base "${{ github.ref_name }}" \
+            --head "$BRANCH" \
+            --title "chore(deps): update dependencies" \
+            --body "${{ steps.preview.outputs.log }}" \
+            --label dependencies)
+          gh pr merge "$PR_URL" --auto --rebase
